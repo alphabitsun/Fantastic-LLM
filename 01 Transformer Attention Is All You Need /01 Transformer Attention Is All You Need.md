@@ -33,10 +33,10 @@ Transformer 模型总体的框架如下图所示：总体来说，还是和 Enco
 
 ![](https://picx.zhimg.com/80/v2-f472371d4f08493340b927a913fed16a_1440w.png?source=d16d100b)
 
-**输入层：** Encoder 和 Decoder 的输入都是**单词的 Embedding 向量** 和 **位置编码**（Positional Encoding，为了像 RNN 那样捕获输入序列的顺序信息）；不同的是:
+**输入层：** Encoder 和 Decoder 的输入都是**单词的 Embedding 向量** 和 **位置编码**（Positional Encoding，为了像 RNN 那样捕获输入序列的顺序信息）；不同的是: 
 
 - 在训练时，Encoder 的**初始输入**是训练集的特征$X$，Decoder 的**初始输入**是训练集的标签$Y$，并且需要整体右移（Shifted Right）一位（即在开头添加</begin>标记位，不能使用当前时刻未来的数据）。
-- 在预测时，Encoder 的**初始输入**和训练时一样**，**同样是完整的数据，Decoder 的会依次**输入$t-1$**时刻的预测结果来预测 $t$ 时刻的结果。
+- 在预测时，Encoder 的**初始输入**和训练时一样，**同样是完整的数据，Decoder的会依次**输入$t-1$时刻的预测结果来预测 $t$ 时刻的结果。
 - 此外在 Decoder 中，**第二子层**的输入为通过 **Encoder 的输出**计算得到的$K$向量和 $V$ 向量，以及通过**前一子层的输出**计算得到的$Q$向量。
 
 **Encoder**：该模块可以分为两部分： **Multi-Head Attention 层和前馈神经网络层**；此外又加了一些额外的处理，如**残差连接（residual connection）、Layer Normalization层**。为了便于残差连接，作者将所有层的输出维度都定义为 $d_{model} = 512$（包括 Embedding 层的输出和位置编码的维度）。这个结构可以循环$N$次（文中 $N=6$）。
@@ -274,11 +274,11 @@ Decoder block 第二个 Multi-Head Attention 变化不大， 主要的区别在�
 # 4. **代码实现**
 
 - 哈佛大学自言语言处理组的notebook，很详细文字和代码描述，用pytorch实现
-    
+  
     https://nlp.seas.harvard.edu/2018/04/03/attention.html
     
 - Google的TensorFlow官方的，用tf keas实现
-    
+  
     https://www.tensorflow.org/tutorials/text/transformer
     
 
