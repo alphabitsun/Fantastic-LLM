@@ -62,7 +62,7 @@ Transformer 模型总体的框架如下图所示：总体来说，还是和 Enco
 **输入层：** Encoder 和 Decoder 的输入都是**单词的 Embedding 向量** 和 **位置编码**（Positional Encoding，为了像 RNN 那样捕获输入序列的顺序信息）；不同的是: 
 
 - 在训练时，Encoder 的**初始输入**是训练集的特征$X$，Decoder 的**初始输入**是训练集的标签$Y$，并且需要整体右移（Shifted Right）一位（即在开头添加</begin>标记位，不能使用当前时刻未来的数据）。
-- 在预测时，Encoder 的**初始输入**和训练时一样，**同样是完整的数据，Decoder的会依次**输入$t-1$时刻的预测结果来预测 $t$ 时刻的结果。
+- 在预测时，Encoder 的**初始输入**和训练时一样，同样是完整的数据，Decoder的会依次输入$t-1$时刻的预测结果来预测 $t$ 时刻的结果。
 - 此外在 Decoder 中，**第二子层**的输入为通过 **Encoder 的输出**计算得到的$K$向量和 $V$ 向量，以及通过**前一子层的输出**计算得到的$Q$向量。
 
 **Encoder**：该模块可以分为两部分： **Multi-Head Attention 层和前馈神经网络层**；此外又加了一些额外的处理，如**残差连接（residual connection）、Layer Normalization层**。为了便于残差连接，作者将所有层的输出维度都定义为 $d_{model} = 512$（包括 Embedding 层的输出和位置编码的维度）。这个结构可以循环$N$次（文中 $N=6$）。
@@ -89,7 +89,7 @@ Transformer 模型总体的框架如下图所示：总体来说，还是和 Enco
 
 首先输入的句子会先利用Tonenizer进行分词，例如“我有一只猫。”，会被分词为”['我', '有', '一只', '猫']”， 然后对每个token进行embedding，形成Embedding矩阵$E^{4\times512}$（文中的embedding维度为512）；并对每个token进行位置编码，得到输入数据的Position Embedding矩阵$P^{4\times512}$；接着将两个矩阵相加，形成最终的输入矩阵$X^{4\times512}$。
 
-![Untitled](01%20Transformer%20Attention%20Is%20All%20You%20Need%20e27de68b3b2042f5ac198f5d91641ffa/Untitled.png)
+![Untitled](./Untitled.png)
 
 ### 2.1.2 Decoder的输入
 
