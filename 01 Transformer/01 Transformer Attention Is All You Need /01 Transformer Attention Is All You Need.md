@@ -2,7 +2,31 @@
 
 ![](https://picx.zhimg.com/80/v2-6f971cd754692ea6311f6f115837a09e_1440w.png?source=d16d100b)
 
-[TOC]
+-  [01. Transformer: Attention Is All You Need](#01-transformer-attention-is-all-you-need)
+-  [1. 简述](#1-简述)
+   -  [1.1 Transformer 定义](#11-transformer-定义)
+   -  [1.2 Transformer 为何优于RNN?](#12-transformer-为何优于rnn)
+-  [2. Transformer 模型架构](#2-transformer-模型架构)
+   -  [2.1 模型输入](#21-模型输入)
+      -  [2.1.1 Encoder的输入](#211-encoder的输入)
+      -  [2.1.2 Decoder的输入](#212-decoder的输入)
+      -  [2.1.3 Position Embedding](#213-position-embedding)
+      -  [2.1.4 Embedding demo](#214-embedding-demo)
+   -  [2.2 Encoder 模块](#22-encoder-模块)
+      -  [2.2.1 Self-Attention](#221-self-attention)
+      -  [2.2.2 Multi-Headed Attention](#222-multi-headed-attention)
+   -  [2.3 Decoder 模块](#23-decoder-模块)
+      -  [2.3.1 Decoder 的输入](#231-decoder-的输入)
+      -  [2.3.2 第一个 Multi-Head Attention](#232-第一个-multi-head-attention)
+      -  [2.3.3 第二个 Multi-Head Attention](#233-第二个-multi-head-attention)
+      -  [2.3.4 在做预测时，步骤如下：](#234-在做预测时步骤如下)
+   -  [2.4 输出层](#24-输出层)
+-  [3. Transformer特点](#3-transformer特点)
+   -  [优点](#优点)
+   -  [缺点](#缺点)
+-  [4. 代码实现](#4-代码实现)
+-  [5. 参考资料：](#5-参考资料)
+
 
 # 1. 简述
 
