@@ -7,7 +7,7 @@
 ## 内容一览
 
 - 01：Transformer 论文精读与要点回顾（配图）
-  - 文档：[`01 Transformer Attention Is All You Need /01 Transformer Attention Is All You Need.md`](01%20Transformer%20Attention%20Is%20All%20You%20Need%20/01%20Transformer%20Attention%20Is%20All%20You%20Need.md)
+  - 文档：[`01 Transformer Attention Is All You Need.md`](./01%20Transformer%20Attention%20Is%20All%20You%20Need.md)
 - 02：分词器（Tokenizer）原理与实践
   - 文档：[`02 Tokenizer.md`](02%20Tokenizer.md)
 - 03：Embedding（词/句向量）
@@ -18,6 +18,8 @@
   - 文档：[`05 Activations and Normalizations.md`](05%20Activations%20and%20Normalizations.md)
 - 06：优化方法（Optimizations）
   - 文档：[`06 Optimizations.md`](06%20Optimizations.md)
+- 评估：LLM 评测方法与数据集
+  - 文档：[`Evaluate.md`](./Evaluate.md)
 - 07：LLM 指令微调（Fine-tuning）与参数高效微调（PEFT）
   - 总览：[`07 LLM Fine tuning/07 LLM Fine tuning.md`](07%20LLM%20Fine%20tuning/07%20LLM%20Fine%20tuning.md)
   - LoRA：[`07 LLM Fine tuning/LoRA.md`](07%20LLM%20Fine%20tuning/LoRA.md)

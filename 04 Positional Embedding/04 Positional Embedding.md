@@ -120,7 +120,7 @@ print(relative_pos_encoding.shape)  # (10, 10, 16)
 **2.3.3 ‼️旋转位置编码（Rotary Positional Embedding）**
 
 1. **什么是 RoPE（Rotary Positional Embedding）？**
-    
+   
     RoPE（旋转位置编码）是一种**相对位置编码**方法，在论文[《**RoFormer: Enhanced Transformer with Rotary Position Embedding**》](https://arxiv.org/abs/2104.09864)中提出。这种方法通过在**计算 Self-Attention 之前，对 Query 和 Key 进行旋转变换**来引入位置信息。
     
 2. RoPE 的关键思想：
@@ -128,7 +128,7 @@ print(relative_pos_encoding.shape)  # (10, 10, 16)
     2. **无需额外参数**：RoPE **不依赖于可训练的位置嵌入**，也不像绝对位置编码那样需要一个额外的 embedding 层。
     3. **能外推到更长序列**：RoPE 适用于超长序列，即使训练时的序列长度有限，在推理时仍然可以处理更长的输入（相比 BERT、GPT 使用的绝对位置编码，RoPE 能更好地泛化到更长的上下文）。
 3. RoPE 的数学原理
-    
+   
     RoPE 通过 **旋转变换**（Rotary Transformation）让不同位置的 token 之间自然地保留相对位置关系。
     
     具体来说，假设 token 的 Query 和 Key 向量维度是 $d$，对于每个偶数维度 $i$  和 $i +1$：
@@ -152,7 +152,7 @@ print(relative_pos_encoding.shape)  # (10, 10, 16)
     这种旋转变换能确保 **两个 token 之间的内积只与它们的相对位置有关，而不是绝对位置**，从而让注意力机制更加稳定。
     
 4. **RoPE 在 LLaMA 中的应用**
-    
+   
     在 LLaMA 的实现中，RoPE 被用于 **Transformer 的 Self-Attention 计算**。其具体做法是：
     
     1. **对 Query 和 Key 应用旋转位置编码**，但不对 Value 进行变换。
