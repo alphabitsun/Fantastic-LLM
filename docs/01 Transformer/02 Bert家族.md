@@ -6,17 +6,17 @@
 
 ### 1.1 BERT
 
-**BERT**（**B**idirectional **E**ncoder **R**epresentations from **T**ransformers） 是一个语言表示模型。它的主要模型结构是 Trasnformer 的 Encoder 堆叠而成，它其实是一个2阶段的框架，分别是pretraining，以及在各个具体任务上进行finetuning。BERT 模型可以作为公认的里程碑式的模型，但是它最大的优点不是创新，而是集大成者，并且这个集大成者有了各项突破，从大量无标记数据集中训练得到的深度模型，可以显著提高各项自然语言处理任务的准确率。
+**BERT**（**B**idirectional **E**ncoder **R**epresentations from **T**ransformers） 的主要模型结构是 Trasnformer 的 Encoder 堆叠而成，它其实是一个2阶段的框架，分别是pretraining，以及在各个具体任务上进行finetuning。
 
-**BERT** 参考了 **ELMo&#x20;**&#x6A21;型的双向编码思想、借鉴了 **GPT&#x20;**&#x7528; Transformer 作为特征提取器的思路、采用了 **Word2Vec** 所使用的 **CBOW** 方法。具体的，**GPT&#x20;**&#x4F7F;用 Transformer Decoder 作为特征提取器、具有良好的文本生成能力，然而当前词的语义只能由其前序词决定，并且在语义理解上不足，而 **BERT&#x20;**&#x4F7F;用了 Transformer Encoder 作为特征提取器，并使用了掩码训练方法。虽然使用双向编码让 BERT 不再具有文本生成能力，但是 **BERT&#x20;**&#x7684;语义信息提取能力更强，这3种模型结构如下所示：
+**BERT** 参考了 **ELMo&#x20;**&#x6A21;型的双向编码思想、借鉴了 **GPT&#x20;**&#x7528; Transformer 作为特征提取器的思路\。具体的，**GPT&#x20;**&#x4F7F;用 Transformer Decoder 作为特征提取器、具有良好的文本生成能力，然而当前词的语义只能由其前序词决定，并且在语义理解上不足，而 **BERT&#x20;**&#x4F7F;用了 Transformer Encoder 作为特征提取器，并使用了掩码训练方法。虽然使用双向编码让 BERT 不再具有文本生成能力，但是 **BERT&#x20;**&#x7684;语义信息提取能力更强，这3种模型结构如下所示：
 
-![1280X1280](./1280X1280.PNG)
+![1280X1280](./images/screenshot-20250903-222313.PNG)
 
-> * **ELMo** 使用自左向右编码和自右向左编码的两个 LSTM 网络，分别以$$P(w_i|w_1, \cdots,w_{i−1})$$和 $$P(w_i|w_{i+1}, \cdots,w_n)$$为目标函数独立训练，将训练得到的特征向量以拼接的形式实现双向编码，本质上还是**单向编码**，只不过是**两个方向上的单向编码的拼接而成的双向编码**。
->
-> * **GPT** 使用 Transformer Decoder 作为 Transformer Block，以$$P(w_i|w_1,⋯,w_{i−1})$$为目标函数进行训练，用 Transformer Block 取代 LSTM 作为特征提取器，实现了**单向编码**，是一个标准的预训练语言模型，使用 Fine-Tuning 模式解决下游任务。
->
-> * **BERT** 也是一个标准的预训练语言模型，它以$$P(w_i|w_1,\cdots ,w_{i−1},w_{i+1},\cdots,w_n)$$为目标函数进行训练，BERT 使用的编码器属于**双向编码器**。**BERT** 和 **ELMo&#x20;**&#x7684;区别在于使用 Transformer Block 作为特征提取器，加强了语义特征提取的能力。**BERT&#x20;**&#x548C; **GPT&#x20;**&#x7684;区别在于使用 Transformer Encoder 作为 Transformer Block，并且将 GPT 的单向编码改成双向编码，**BERT&#x20;**&#x820D;弃了文本生成能力，换来了更强的语义理解能力。
+- **ELMo** 使用自左向右编码和自右向左编码的两个 LSTM 网络，分别以$P(w_i|w_1, \cdots,w_{i−1})$$和 $$P(w_i|w_{i+1}, \cdots,w_n)$为目标函数独立训练，将训练得到的特征向量以拼接的形式实现双向编码，本质上还是**单向编码**，只不过是**两个方向上的单向编码的拼接而成的双向编码**。
+
+- **GPT** 使用 Transformer Decoder 作为 Transformer Block，以$$P(w_i|w_1,⋯,w_{i−1})$$为目标函数进行训练，用 Transformer Block 作为特征提取器，实现了**单向编码**，是一个标准的预训练语言模型，使用 Fine-Tuning 模式解决下游任务。
+
+- **BERT** 也是一个标准的预训练语言模型，它以$$P(w_i|w_1,\cdots ,w_{i−1},w_{i+1},\cdots,w_n)$$为目标函数进行训练，BERT 使用的编码器属于**双向编码器**。**BERT** 和 **ELMo&#x20;**&#x7684;区别在于使用 Transformer Block 作为特征提取器，加强了语义特征提取的能力。**BERT&#x20;**&#x548C; **GPT&#x20;**&#x7684;区别在于使用 Transformer Encoder 作为 Transformer Block，并且将 GPT 的单向编码改成双向编码，**BERT&#x20;**&#x820D;弃了文本生成能力，换来了更强的语义理解能力。
 
 具体的，**BERT&#x20;**&#x7684;模型结构如右图所示，**BERT&#x20;**&#x6A21;型就是 Transformer Encoder 的堆叠。有两个模型规模：
 
