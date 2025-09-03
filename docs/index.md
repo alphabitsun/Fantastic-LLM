@@ -10,7 +10,7 @@ layout: home
 ## 快速导航
 
 - 01 Transformer
-  - [01 Transformer Attention Is All You Need](./01%20Transformer/01%20Transformer%20Attention%20Is%20All%20You%20Need%20/01%20Transformer%20Attention%20Is%20All%20You%20Need.md)
+  - [01 Transformer Attention Is All You Need](./01%20Transformer%20Attention%20Is%20All%20You%20Need.md)
   - [02 Bert 家族](./01%20Transformer/02%20Bert家族.md)
 - 02 Tokenizer
   - [02 Tokenizer](./02%20Tokenizer/02%20Tokenizer.md)
