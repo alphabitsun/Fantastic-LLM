@@ -5,4 +5,3 @@ kramdown:
 theme: minima
 liquid:
   error_mode: lax
-
