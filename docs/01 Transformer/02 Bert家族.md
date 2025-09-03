@@ -456,10 +456,6 @@ i-j+1 & \text{for others}
 
 $$Q_c = HW_{q,c}, K_c = HW_{k,c}, V_c = HW_{v,c}, Q_r = PW_{q,r}, K_r = PW_{k,r}$$
 
-<!-- $$\tilde{A}_{i,j} = 
-\underbrace{{Q_i^c K_j^c}^\top}_{\text{(a) content-to-content}} + 
-\underbrace{{Q_i^c K_{\delta(i,j)}^r}^\top}_{\text{(b) content-to-position}} + 
-\underbrace{{K_j^c Q_{\delta(j,i)}^r}^\top}_{\text{(c) position-to-content}}$$ -->
 
 $$H_o = \text{softmax}(\frac{\tilde{A}}{\sqrt{3d}})V_c$$
 
