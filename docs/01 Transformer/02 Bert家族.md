@@ -4,7 +4,7 @@
 >
 > **代码**：[RoBERTa](https://github.com/pytorch/fairseq)  [DeBERTa](https://github.com/microsoft/DeBERTa)
 
-## 1.1 BERT
+## 1 BERT
 
 **BERT**（**B**idirectional **E**ncoder **R**epresentations from **T**ransformers） 的主要模型结构是 Trasnformer 的 Encoder 堆叠而成，它其实是一个2阶段的框架，分别是pretraining，以及在各个具体任务上进行finetuning。
 
@@ -339,7 +339,7 @@ NSP 的具体做法是，BERT 输入的语句将由两个句子构成，其中�
 
 **BERT&#x20;**&#x9769;新了自然语言处理领域。它基于 Transformer 的编码器结构，通过双向训练机制同时考虑词的左右上下文，提升了语言理解能力。在训练阶段，BERT 使用 MLM 和 NSP 任务。**MLM** 通过遮蔽部分输入词汇并让模型预测这些词来学习；**NSP** 则帮助模型理解句子间的联系。这种训练方式使 BERT 能在多种NLP任务中只需少量微调就获得出色表现。**BERT&#x20;**&#x7684;出现显著提高了文本分类、问答系统等任务的效果，并催生了一系列改进版本，如**RoBERTa** 等，推动了 NLP 技术的进步。**BERT&#x20;**&#x53CA;其变体已经成为现代 NLP 不可或缺的一部分，持续影响着研究与应用的发展方向。
 
-## 4.1.2 RoBERTa
+## 2 RoBERTa
 
 **RoBERTa**（A Robustly Optimized BERT Pretraining Approach） 模型是 **BERT** 的改进版，主要有以下几个方面：
 
@@ -413,7 +413,7 @@ BPE（Byte-Pair Encoding）是字符级和词级别表征的混合，支持处�
 
 **RoBERTa** 发现，通过更长时间地训练模型，在更多数据上使用更大的批次，移除下一句预测目标，训练更长的序列，并动态更改应用于训练数据的屏蔽模式可以显着提高性能。**RoBERTa** 改进的预训练方法在 GLUE、RACE 和 SQuAD 上取得了最好的结果。
 
-## 4.1.3 DeBERTa V1/2
+## 3 DeBERTa V1/2
 
 **DeBERTa**（**D**ecoding-**e**nhanced **BERT** with disentangled **a**ttention）模型是微软在 2021 年提出的，到现在其实已经迭代了三个版本，第一版发布的时候在 SuperGLUE 排行榜上就已经获得了超越人类的水平。目前，一些比较有挑战的 NLP 任务，甚至是 NLG 任务都会用 **DeBERTa** 模型当成预训练模型，进一步微调。
 
@@ -509,7 +509,7 @@ $\tilde{A}_{i,j}$是注意矩阵$\tilde{A}$的元素，表示从 token $i$到 to
 
 ![]()
 
-## 4.1.4 DeBERTa V3
+## 4 DeBERTa V3
 
 2021年11月 **DeBERTa&#x20;**&#x53C8;放出了 V3 版本。这次的版本在模型层面并没有修改，而是将预训练任务由掩码语言模型 **MLM&#x20;**&#x6362;成了 ELECTRA 一样类似 GAN 的 **RTD**（**R**eplaced **T**oken **D**etection）任务。
 
