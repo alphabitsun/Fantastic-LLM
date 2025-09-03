@@ -2,7 +2,7 @@
 
 ![](https://picx.zhimg.com/80/v2-6f971cd754692ea6311f6f115837a09e_1440w.png?source=d16d100b)
 
-**论文**：https://arxiv.org/abs/1706.03762
+> **论文**：**[Attention Is All You Need](https://arxiv.org/abs/1706.03762) 
 
 # 1. 简述
 
