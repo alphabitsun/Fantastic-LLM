@@ -16,17 +16,17 @@
 
 Transformer 论文《Attention Is All You Need》中提出了如下的公式：
 
-\(PE_{(pos, 2i)} = \sin(pos / 10000^{2i/d})\)
+$PE_{(pos, 2i)} = \sin(pos / 10000^{2i/d})$
 
-\(PE_{(pos, 2i+1)} = \cos(pos / 10000^{2i/d})\)
+$PE_{(pos, 2i+1)} = \cos(pos / 10000^{2i/d})$
 
 其中：
 
-• \(pos\) 表示 token 在序列中的位置
+• $pos$ 表示 token 在序列中的位置
 
-• \(i\) 表示维度索引
+• $i$ 表示维度索引
 
-• \(d\) 表示嵌入向量的维度
+• $d$ 表示嵌入向量的维度
 
 这种方法的优势：
 
@@ -57,7 +57,7 @@ print(pos_encoding)
 
 ### **2.2 可训练的位置嵌入（Learnable Positional Embedding）**
 
-这种方法使用**一个可学习的嵌入矩阵**，类似于 Word Embedding，每个位置 \(p\) 对应一个独立的可训练向量：\(PE_p = \text{Embedding}(p)\)
+这种方法使用**一个可学习的嵌入矩阵**，类似于 Word Embedding，每个位置 $p$ 对应一个独立的可训练向量：$PE_p = \text{Embedding}(p)$
 
 该方法的特点：
 
@@ -92,7 +92,7 @@ print(positional_encoding.shape)  # (1, 10, 128)
 ⁍
 \]
 
-其中 \(R\) 是相对位置编码矩阵，表示 Query 和 Key 之间的相对位置信息。
+其中 $R$ 是相对位置编码矩阵，表示 Query 和 Key 之间的相对位置信息。
 
 **2.3.2 Transformer-XL 版本**
 
@@ -131,7 +131,7 @@ print(relative_pos_encoding.shape)  # (10, 10, 16)
    
     RoPE 通过 **旋转变换**（Rotary Transformation）让不同位置的 token 之间自然地保留相对位置关系。
     
-    具体来说，假设 token 的 Query 和 Key 向量维度是 \(d\)，对于每个偶数维度 \(i\)  和 \(i +1\)：
+    具体来说，假设 token 的 Query 和 Key 向量维度是 $d$，对于每个偶数维度 $i$  和 $i +1$：
     
 \[
     ⁍
@@ -143,11 +143,11 @@ print(relative_pos_encoding.shape)  # (10, 10, 16)
     
     其中：
     
-    •  \(x\)  是 Query 或 Key 向量，
+    •  $x$  是 Query 或 Key 向量，
     
-    •  \(\theta = \theta_{pos, i} = pos / 10000^{2i/d}\) ，
+    •  $\theta = \theta_{pos, i} = pos / 10000^{2i/d}$ ，
     
-    •  \(pos\) 是 token 在序列中的位置。
+    •  $pos$ 是 token 在序列中的位置。
     
     这种旋转变换能确保 **两个 token 之间的内积只与它们的相对位置有关，而不是绝对位置**，从而让注意力机制更加稳定。
     
