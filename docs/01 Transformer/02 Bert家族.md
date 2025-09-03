@@ -14,9 +14,9 @@
 
 - **ELMo** 使用自左向右编码和自右向左编码的两个 LSTM 网络，分别以$P(w_i|w_1, \cdots,w_{i−1})$$和 $$P(w_i|w_{i+1}, \cdots,w_n)$为目标函数独立训练，将训练得到的特征向量以拼接的形式实现双向编码，本质上还是**单向编码**，只不过是**两个方向上的单向编码的拼接而成的双向编码**。
 
-- **GPT** 使用 Transformer Decoder 作为 Transformer Block，以$$P(w_i|w_1,⋯,w_{i−1})$$为目标函数进行训练，用 Transformer Block 作为特征提取器，实现了**单向编码**，是一个标准的预训练语言模型，使用 Fine-Tuning 模式解决下游任务。
+- **GPT** 使用 Transformer Decoder 作为 Transformer Block，以$P(w_i|w_1,⋯,w_{i−1})$为目标函数进行训练，用 Transformer Block 作为特征提取器，实现了**单向编码**，是一个标准的预训练语言模型，使用 Fine-Tuning 模式解决下游任务。
 
-- **BERT** 也是一个标准的预训练语言模型，它以$$P(w_i|w_1,\cdots ,w_{i−1},w_{i+1},\cdots,w_n)$$为目标函数进行训练，BERT 使用的编码器属于**双向编码器**。**BERT** 和 **ELMo&#x20;**&#x7684;区别在于使用 Transformer Block 作为特征提取器，加强了语义特征提取的能力。**BERT&#x20;**&#x548C; **GPT&#x20;**&#x7684;区别在于使用 Transformer Encoder 作为 Transformer Block，并且将 GPT 的单向编码改成双向编码，**BERT&#x20;**&#x820D;弃了文本生成能力，换来了更强的语义理解能力。
+- **BERT** 也是一个标准的预训练语言模型，它以$P(w_i|w_1,\cdots ,w_{i−1},w_{i+1},\cdots,w_n)$为目标函数进行训练，BERT 使用的编码器属于**双向编码器**。**BERT** 和 **ELMo&#x20;**&#x7684;区别在于使用 Transformer Block 作为特征提取器，加强了语义特征提取的能力。**BERT&#x20;**&#x548C; **GPT&#x20;**&#x7684;区别在于使用 Transformer Encoder 作为 Transformer Block，并且将 GPT 的单向编码改成双向编码，**BERT&#x20;**&#x820D;弃了文本生成能力，换来了更强的语义理解能力。
 
 具体的，**BERT&#x20;**&#x7684;模型结构如右图所示，**BERT&#x20;**&#x6A21;型就是 Transformer Encoder 的堆叠。有两个模型规模：
 
@@ -24,13 +24,11 @@
 >
 > $$\text{BERT}_\text{LARGE}: L = 24, H = 1024, A = 16$$
 
-其中$$L$$代表 Transformer Block 的层数，$$H$$代表特征向量的维数，$$A$$表示 Self-Attention 的头数，令词汇表大小为$$V$$，BERT 参数量级的计算公式：
-
-![]()
+其中$L$代表 Transformer Block 的层数，$H$代表特征向量的维数，$A$表示 Self-Attention 的头数，令词汇表大小为$V$，BERT 参数量级的计算公式：
 
 $$\text{Total Parameters} = V \times d_{\text{model}} + L \times \left( 4 \times d_{\text{model}}^2 + 2 \times d_{\text{model}} \times d_{\text{ff}} \right)$$
 
-在 **BERT&#x20;**&#x4E2D;，$$V=30522, d_{\text{ff}}=4\cdot d_{\text{model}}$$，带入可得$$\text{BERT}_\text{BASE}$$参数&#x91CF;**`110M`**，$$\text{BERT}_\text{LARGE}$$参数&#x91CF;**`340M`**
+在 **BERT&#x20;**&#x4E2D;，$V=30522, d_{\text{ff}}=4\cdot d_{\text{model}}$，带入可得$\text{BERT}_\text{BASE}$参数&#x91CF;**`110M`**，$\text{BERT}_\text{LARGE}$参数&#x91CF;**`340M`**
 
 * **BERT 的输入表示**
 
