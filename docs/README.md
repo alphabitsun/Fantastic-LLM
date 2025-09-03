@@ -1,4 +1,4 @@
-<img src="../images/llm.png" alt="image-20250903155120791" style="zoom:50%;" />
+<img src="./images/llm.png" alt="image-20250903155120791" style="zoom:50%;" />
 
 # Fantastic LLM
 
