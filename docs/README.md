@@ -1,4 +1,6 @@
-# FantasticLLM
+<img src="../images/llm.png" alt="image-20250903155120791" style="zoom:50%;" />
+
+# Fantastic LLM
 
 面向大型语言模型（LLM）的系统化学习与实战笔记，按模块拆解从 Transformer 基础、分词与嵌入、位置编码、激活与归一化、优化方法，到指令微调与主流模型对比，并附带配图与示例，便于快速上手与复习查阅。
 
