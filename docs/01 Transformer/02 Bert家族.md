@@ -245,7 +245,7 @@ class BERT(nn.Module):
 
 * **BERT 的预训练**
 
-**BERT&#x20;**&#x91C7;用二段式训练方法：第一阶段：使用易获取的大规模无标签语料，来训练基础语言模型；第二阶段：根据指定任务的少量带标签训练数据进行微调训练。不同于 **GPT&#x20;**&#x7B49;标准语言模型使用$$P(w_i|w_1,⋯,w_{i−1})$$为目标函数进行训练，能看到全局信息的 **BERT&#x20;**&#x4F7F;用$$P(w_i|w_1,\cdots ,w_{i−1},w_{i+1},\cdots,w_n)$$为目标函数进行训练。并且 **BERT&#x20;**&#x7528;**语言掩码模型 MLM** 方法训练词的语义理解能力；用**下句预测 NSP** 方法训练句子之间的理解能力，从而更好地支持下游任务。**BERT&#x20;**&#x5728;预训练阶段使用了前文所述的两种训练方法，在真实训练中一般是两种方法混合使用。
+**BERT&#x20;**&#x91C7;用二段式训练方法：第一阶段：使用易获取的大规模无标签语料，来训练基础语言模型；第二阶段：根据指定任务的少量带标签训练数据进行微调训练。不同于 **GPT&#x20;**&#x7B49;标准语言模型使用$P(w_i|w_1,⋯,w_{i−1})$为目标函数进行训练，能看到全局信息的 **BERT&#x20;**&#x4F7F;用$P(w_i|w_1,\cdots ,w_{i−1},w_{i+1},\cdots,w_n)$为目标函数进行训练。并且 **BERT&#x20;**&#x7528;**语言掩码模型 MLM** 方法训练词的语义理解能力；用**下句预测 NSP** 方法训练句子之间的理解能力，从而更好地支持下游任务。**BERT&#x20;**&#x5728;预训练阶段使用了前文所述的两种训练方法，在真实训练中一般是两种方法混合使用。
 
 ![]()
 
@@ -305,7 +305,7 @@ NSP 的具体做法是，BERT 输入的语句将由两个句子构成，其中�
 
 文本问答任务和前面讲的其他任务有较大的差别，无论是在优化目标上，还是在输入数据和输出数据的形式上，都需要做一些特殊的处理。为了标注答案的起始位置和终止位置，**BERT&#x20;**&#x5F15;入两个辅助向量 **`s`**（start，判断答案的起始位置） 和 **`e`**（end，判断答案的终止位置）。
 
-如右图所示，BERT 判断句子 B 中答案位置的做法是，将句子 B 中的每一个次得到的最终特征向量$$T^′_i$$经过全连接层（利用全连接层将词的抽象语义特征转化为任务指向的特征）后，分别与向量 **`s`** 和 **`e`** 求内积，对所有内积分别进行 **Softmax** 操作，即可得到词$$\text{Tok}\quad m(m\in[1,M])$$作为答案起始位置和终止位置的概率。最后，取概率最大的片段作为最终的答案。
+如右图所示，BERT 判断句子 B 中答案位置的做法是，将句子 B 中的每一个次得到的最终特征向量$T^′_i$经过全连接层（利用全连接层将词的抽象语义特征转化为任务指向的特征）后，分别与向量 **`s`** 和 **`e`** 求内积，对所有内积分别进行 **Softmax** 操作，即可得到词$\text{Tok}\quad m(m\in[1,M])$作为答案起始位置和终止位置的概率。最后，取概率最大的片段作为最终的答案。
 
 ![]()
 
@@ -425,7 +425,7 @@ BPE（Byte-Pair Encoding）是字符级和词级别表征的混合，支持处�
 
 * **注意力解耦**
 
-在 **BERT&#x20;**&#x4E2D;，每个 token 只用一个向量表示，该向量为内容嵌入 content embedding 和位置嵌入 position embedding 之和，而 **DeBERTa** 则对 token embedding 进行解耦，用 content 和 relative position 两个向量来表示一个 token。对于 token $$i$$，**DeBERTa&#x20;**&#x5C06;其表示为内容$$\{H_i\}$$和相对位置$$\{P_{i|j}\}$$，那么token $$i$$和 token $$j$$之间的 attention score 可以被分解为 4 个部分：
+在 **BERT&#x20;**&#x4E2D;，每个 token 只用一个向量表示，该向量为内容嵌入 content embedding 和位置嵌入 position embedding 之和，而 **DeBERTa** 则对 token embedding 进行解耦，用 content 和 relative position 两个向量来表示一个 token。对于 token $i$，**DeBERTa&#x20;**&#x5C06;其表示为内容$\{H_i\}$和相对位置$\{P_{i|j}\}$，那么token $i$和 token $j$之间的 attention score 可以被分解为 4 个部分：
 
 $$A_{i,j} = \{H_i,P_{i∣j}\}×\{H_j,P_{j∣i}\}^T = H_i{H_j}^T + H_i{P_{j|i}}^T + {P_{i|j}}^TH_j + {P_{i|j}}{P_{j|i}}^T$$
 
@@ -437,9 +437,9 @@ $$A_{i,j} = \{H_i,P_{i∣j}\}×\{H_j,P_{j∣i}\}^T = H_i{H_j}^T + H_i{P_{j|i}}^T
 
 $$Q = HW_q, K = HW_k, V = HW_v, A = \frac{QK^\top}{\sqrt{d}}, H_o = \text{softmax}(A)V$$
 
-其中，$$H\in \mathbb{R}^{N\times d}$$表示输入隐藏向量，$$H_o\in \mathbb{R}^{N\times d}$$表示自注意力的输出，$$W_q, W_k, W_v \in \mathbb{R}^{d\times d}$$表示投影矩阵，$$A\in \mathbb{R}^{N\times N}$$表示注意力矩阵，$$N$$表示输入序列的长度，$$d$$表示隐藏状态的维数。
+其中，$H\in \mathbb{R}^{N\times d}$表示输入隐藏向量，$H_o\in \mathbb{R}^{N\times d}$表示自注意力的输出，$W_q, W_k, W_v \in \mathbb{R}^{d\times d}$表示投影矩阵，$A\in \mathbb{R}^{N\times N}$表示注意力矩阵，$N$表示输入序列的长度，$d$表示隐藏状态的维数。
 
-令$$k=512$$为可能的最大相对距离，$$\delta(i,j)\in[0,2k)$$为 token $$i$$,$$j$$ 的相对距离，定义为：
+令$k=512$为可能的最大相对距离，$\delta(i,j)\in[0,2k)$为 token $i$,$j$ 的相对距离，定义为：
 
 $$\delta(i,j) = 
 \begin{cases} 
@@ -457,11 +457,11 @@ $$Q_c = HW_{q,c}, K_c = HW_{k,c}, V_c = HW_{v,c}, Q_r = PW_{q,r}, K_r = PW_{k,r}
 
 $$H_o = \text{softmax}(\frac{\tilde{A}}{\sqrt{3d}})V_c$$
 
-其中$$Q_c, K_c$$和$$V_c$$分别是使用投影矩阵$$W_{q,c}, W_{k,c}, W_{v,c}\in \mathbb{R}^{d\times d}$$生成的投影内容向量，$$P\in \mathbb{R}^{2k\times d}$$表示跨所有层共享的相对位置嵌入向量，之所以是$$2k$$是因为相对距离的最大值就是$$2k-1$$，所以$$P$$表示的是各个相对距离情况下对应的向量。$$Q_r$$和$$K_r$$分别是使用投影矩阵$$W_{q,r}, W_{k,r}\in \mathbb{R}^{d\times d}$$生成的投影相对位置向量。
+其中$Q_c, K_c$和$V_c$分别是使用投影矩阵$W_{q,c}, W_{k,c}, W_{v,c}\in \mathbb{R}^{d\times d}$生成的投影内容向量，$P\in \mathbb{R}^{2k\times d}$表示跨所有层共享的相对位置嵌入向量，之所以是$2k$是因为相对距离的最大值就是$2k-1$，所以$P$表示的是各个相对距离情况下对应的向量。$Q_r$和$K_r$分别是使用投影矩阵$W_{q,r}, W_{k,r}\in \mathbb{R}^{d\times d}$生成的投影相对位置向量。
 
-$$\tilde{A}_{i,j}$$是注意矩阵$$\tilde{A}$$的元素，表示从 token $$i$$到 token $$j$$的注意力得分。$$Q^c_i$$是$$Q_c$$的第$$i$$行。$$K^c_j$$是$$K_c$$的第$$j$$行。$$K_{\delta(i,j)}^r$$是矩阵$$K_r$$的第$$δ(i,j)$$行向量，$$Q_{\delta(j,i)}^r$$为矩阵$$Q_r$$的第$$δ(j,i)$$行向量。这里使用$$δ(j,i)$$而不是$$δ(i,j)$$是因为对于给定的位置$$i$$，内容$$j$$处相对于$$i$$处的查询位置的注意力权重，因此相对距离是$$δ(j,i)$$。位置到内容项计算为$${K_j^c Q_{\delta(j,i)}^r}^\top$$。内容到位置的项以类似的方式计算。
+$\tilde{A}_{i,j}$是注意矩阵$\tilde{A}$的元素，表示从 token $i$到 token $j$的注意力得分。$Q^c_i$是$Q_c$的第$i$行。$K^c_j$是$K_c$的第$j$行。$K_{\delta(i,j)}^r$是矩阵$K_r$的第$δ(i,j)$行向量，$Q_{\delta(j,i)}^r$为矩阵$Q_r$的第$δ(j,i)$行向量。这里使用$δ(j,i)$而不是$δ(i,j)$是因为对于给定的位置$i$，内容$j$处相对于$i$处的查询位置的注意力权重，因此相对距离是$δ(j,i)$。位置到内容项计算为${K_j^c Q_{\delta(j,i)}^r}^\top$。内容到位置的项以类似的方式计算。
 
-最后得到了注意力权重矩阵$$\tilde{A}$$，因为这下分别是三组$$Q, K$$相乘的求和，所以收缩时的维度也翻了三倍，要除以$$\sqrt{3d}$$，之后再与$$V$$相乘。
+最后得到了注意力权重矩阵$\tilde{A}$，因为这下分别是三组$Q, K$相乘的求和，所以收缩时的维度也翻了三倍，要除以$\sqrt{3d}$，之后再与$V$相乘。
 
 * **增强的掩码解码器**
 
@@ -471,7 +471,7 @@ $$\tilde{A}_{i,j}$$是注意矩阵$$\tilde{A}$$的元素，表示从 token $$i$$
 
 **例**：给定一个句&#x5B50;**`a new store opened beside the new mall`**，并 mask &#x6389;**`store`**&#x548C;**`mall`**&#x4E24;个词以进行预测。 仅使用局部上下文，即相对位置和周围的单词，不足以使模型在此句子中区&#x5206;**`store`**&#x548C;**`mall`**，因为两者都以相同的相对位置&#x5728;**`new`**&#x5355;词之后。 为了解决这个限制，模型需要考虑绝对位置，作为相对位置的补充信息。 例如句子的主题&#x662F;**`store`**&#x800C;不&#x662F;**`mall`**。 这些语法上的细微差别在很大程度上取决于单词在句子中的绝对位置。
 
-**EMD&#x20;**&#x6709;两个输入，即$$I$$和$$H$$。$$H$$表示来自Transformer 层的隐藏状态，$$I$$是用于解码的必要信息，如绝对位置嵌入或先前的 **EMD&#x20;**&#x5C42;输出，每个 **EMD&#x20;**&#x5C42;的输出将是下一个 **EMD&#x20;**&#x5C42;的输入$$I$$，最后一个 **EMD&#x20;**&#x5C42;的输出将直接输出到语言模型头。 **DeBERTa&#x20;**&#x4F7F;用$$n=2$$层的 **EMD&#x20;**&#x5C42;并共享权重，以减少参数的数量，并使用绝对位置嵌入作为第一个 **EMD** 层的$$I$$。当$$I = H, n=1$$时，**EMD&#x20;**&#x4E0E; **BERT&#x20;**&#x89E3;码器层相同，不过 **EMD** 更通用、更灵活，因为它可以使用各种类型的输入信息进行解码。
+**EMD&#x20;**&#x6709;两个输入，即$I$和$H$。$H$表示来自Transformer 层的隐藏状态，$I$是用于解码的必要信息，如绝对位置嵌入或先前的 **EMD&#x20;**&#x5C42;输出，每个 **EMD&#x20;**&#x5C42;的输出将是下一个 **EMD&#x20;**&#x5C42;的输入$I$，最后一个 **EMD&#x20;**&#x5C42;的输出将直接输出到语言模型头。 **DeBERTa&#x20;**&#x4F7F;用$n=2$层的 **EMD&#x20;**&#x5C42;并共享权重，以减少参数的数量，并使用绝对位置嵌入作为第一个 **EMD** 层的$I$。当$I = H, n=1$时，**EMD&#x20;**&#x4E0E; **BERT&#x20;**&#x89E3;码器层相同，不过 **EMD** 更通用、更灵活，因为它可以使用各种类型的输入信息进行解码。
 
 ![]()
 
@@ -491,7 +491,7 @@ $$\tilde{A}_{i,j}$$是注意矩阵$$\tilde{A}$$的元素，表示从 token $$i$$
 
 **DeBERTa&#x20;**&#x6A21;型使用&#x4E86;**`注意力解耦机制`**&#x548C;**`增强的掩码解码器`**&#x4E24;种新技术改进了 **BERT&#x20;**&#x548C; **RoBERTa&#x20;**&#x6A21;型，同时还引入&#x4E86;**`虚拟对抗训练方法`**&#x4EE5;提高模型的泛化能力。结果表明，这些技术显著提高了模型预训练的效率以及自然语言理解（NLU）和自然语言生成（NLG）下游任务的性能：
 
-与$$\text{RoBERTa}_\text{large}$$相比，基于一半训练数据训练的 **DeBERTa&#x20;**&#x6A21;型在很多 NLP 任务中始终表现得更好，MNLI 提高了0.9%，SQuAD v2.0提高了2.3%，RACE提高了3.6%。同时，训练由 48 个 Transformer 层和 15 亿参数组成的$$\text{DeBERTa}_\text{large}$$模型，性能得到显著提升，单个 DeBERTa 模型在平均得分方面首次超过了 SuperGLUE 基准测试上的表现，同时集成的 DeBERTa 模型位居榜首。截至 2021 年 1 月 6 日，SuperGLUE 排行榜已经超过了人类基线。
+与$\text{RoBERTa}_\text{large}$相比，基于一半训练数据训练的 **DeBERTa&#x20;**&#x6A21;型在很多 NLP 任务中始终表现得更好，MNLI 提高了0.9%，SQuAD v2.0提高了2.3%，RACE提高了3.6%。同时，训练由 48 个 Transformer 层和 15 亿参数组成的$\text{DeBERTa}_\text{large}$模型，性能得到显著提升，单个 DeBERTa 模型在平均得分方面首次超过了 SuperGLUE 基准测试上的表现，同时集成的 DeBERTa 模型位居榜首。截至 2021 年 1 月 6 日，SuperGLUE 排行榜已经超过了人类基线。
 
 * **DeBERTa V2**
 
@@ -517,11 +517,11 @@ BERT 只使用了编码器层和 **MLM&#x20;**&#x8FDB;行训练。而 **ELECTRA&
 
 * **损失函数**
 
-**Generator $$\theta_G$$**&#x4F7F;用 **MLM&#x20;**&#x8FDB;行训练，用于生成替换 masked tokens 的 ambiguous tokens，损失函数如下：
+**Generator $\theta_G$**&#x4F7F;用 **MLM&#x20;**&#x8FDB;行训练，用于生成替换 masked tokens 的 ambiguous tokens，损失函数如下：
 
 $$L_{\text{MLM}} = \mathbb{E} \left( -\sum_{i \in C} \log p_{\theta_G} \left( \tilde{x}_{i,G} = x_i \middle| \tilde{X}_G \right) \right)$$
 
-**Discriminator $$\theta_D$$**&#x4F7F;用 **RTD&#x20;**&#x8FDB;行训练，用于检测输入序列中由 generator 生成的伪造 tokens。它的输入序列$$\tilde X_D$$由 generator 的输出序列构造得到：
+**Discriminator $\theta_D$**&#x4F7F;用 **RTD&#x20;**&#x8FDB;行训练，用于检测输入序列中由 generator 生成的伪造 tokens。它的输入序列$\tilde X_D$由 generator 的输出序列构造得到：
 
 $$\tilde{x}_{i,D} = 
 \begin{cases} 
@@ -529,11 +529,11 @@ $$\tilde{x}_{i,D} =
 x_i, & i \notin C 
 \end{cases}$$
 
-对于 Generator 生成的序列，如果 token $$i$$不属于 masked token，则保留 token $$i$$，否则根据 Generator 生成的概率分布采样出一个伪造的 token，最终可以得到 Discriminator 的生成序列。损失函数为：
+对于 Generator 生成的序列，如果 token $i$不属于 masked token，则保留 token $i$，否则根据 Generator 生成的概率分布采样出一个伪造的 token，最终可以得到 Discriminator 的生成序列。损失函数为：
 
 $$L_{\text{RTD}} = \mathbb{E} \left(-\sum_{i} \log p_{\theta_D} \left( \mathbb{1}(\tilde{x}_{i,D} = x_i) \middle| \tilde{X}_D, i \right) \right)$$
 
-**总的损失函数**为：$$L = L_\text{MLM} + \lambda L_\text{RTD}$$
+**总的损失函数**为：$L = L_\text{MLM} + \lambda L_\text{RTD}$
 
 * **训练方法**
 
@@ -545,7 +545,7 @@ $$L_{\text{RTD}} = \mathbb{E} \left(-\sum_{i} \log p_{\theta_D} \left( \mathbb{1
 
 **(ES)**
 
-在 **RTD&#x20;**&#x9884;训练时，生成器和判别器共享 token embedding $$E$$，因此$$E$$的梯度为
+在 **RTD&#x20;**&#x9884;训练时，生成器和判别器共享 token embedding $E$，因此$E$的梯度为
 
 $$g_E = \frac{\partial L_\text{MLM}}{\partial E} + \lambda \frac{\partial L_\text{RTD}}{\partial E}$$
 
@@ -557,9 +557,9 @@ $$g_E = \frac{\partial L_\text{MLM}}{\partial E} + \lambda \frac{\partial L_\tex
 
 **(NES)**
 
-不共享 token embedding。先用$$L_\text{MLM}$$训练生成器，再用$$\lambda L_\text{RTD}$$训练判别器。
+不共享 token embedding。先用$L_\text{MLM}$训练生成器，再用$\lambda L_\text{RTD}$训练判别器。
 
-实验发现$$E_G$$之间比较接近，而$$E_D$$之间彼此远离，并且不共享 token embedding 可以有效提高模型收敛速度
+实验发现$E_G$之间比较接近，而$E_D$之间彼此远离，并且不共享 token embedding 可以有效提高模型收敛速度
 
 但不共享 token embedding 损害了模型性能，这证明了 ES 的好处：除了参数高效，生成器的 embedding 能使得判别器更好
 
@@ -567,11 +567,11 @@ $$g_E = \frac{\partial L_\text{MLM}}{\partial E} + \lambda \frac{\partial L_\tex
 
 **Embedding Sharing (GDES)**
 
-共享token embedding，但只使用$$L_\text{MLM}$$而不使用$$\lambda L_\text{RTD}$$更新$$E_G$$，从而可以利用$$E_G$$提升判别器的性能。此外引入初始化为零矩阵的$$E_\Delta$$去适配$$E_G$$：
+共享token embedding，但只使用$L_\text{MLM}$而不使用$\lambda L_\text{RTD}$更新$E_G$，从而可以利用$E_G$提升判别器的性能。此外引入初始化为零矩阵的$E_\Delta$去适配$E_G$：
 
 $$E_D = sg(E_G) + E_\Delta$$
 
-GDES 先用$$L_\text{MLM}$$训练生成器并更新$$E_G$$，再用$$\lambda L_\text{RTD}$$训练判别器(只更新$$E_\Delta$$，不更新$$E_G$$)。训练完后判别器的 token embedding 为$$E_G + E_\Delta$$
+GDES 先用$L_\text{MLM}$训练生成器并更新$E_G$，再用$\lambda L_\text{RTD}$训练判别器(只更新$E_\Delta$，不更新$E_G$)。训练完后判别器的 token embedding 为$E_G + E_\Delta$
 
 **DeBERTa V3** 在某些任务中相比之前模型有不小的涨幅，其中 GDES 模式优化效果最好。
 
