@@ -57,7 +57,7 @@ print(pos_encoding)
 
 ### **2.2 可训练的位置嵌入（Learnable Positional Embedding）**
 
-这种方法使用**一个可学习的嵌入矩阵**，类似于 Word Embedding，每个位置 $p$ 对应一个独立的可训练向量：$PE_p = \text{Embedding}(p)$
+这种方法使用**一个可学习的嵌入矩阵**，类似于 Word Embedding，每个位置 $p$ 对应一个独立的可训练向量： $PE_p = \text{Embedding}(p)$
 
 该方法的特点：
 
