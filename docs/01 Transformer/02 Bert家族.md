@@ -1,8 +1,8 @@
 ## BERT 家族
 
-> **论文**：**[BERT](https://arxiv.org/pdf/1810.04805)  [RoBERTa](https://arxiv.org/pdf/1907.11692)  [DeBERTaV1](https://arxiv.org/pdf/2006.03654)  [DeBERTaV3](https://arxiv.org/pdf/2111.09543)**
+> **论文**：[BERT](https://arxiv.org/pdf/1810.04805)  [RoBERTa](https://arxiv.org/pdf/1907.11692)  [DeBERTaV1](https://arxiv.org/pdf/2006.03654)  [DeBERTaV3](https://arxiv.org/pdf/2111.09543)
 >
-> **代码**：**[RoBERTa](https://github.com/pytorch/fairseq)  [DeBERTa](https://github.com/microsoft/DeBERTa)**
+> **代码**：[RoBERTa](https://github.com/pytorch/fairseq)  [DeBERTa](https://github.com/microsoft/DeBERTa)
 
 ### 1.1 BERT
 
