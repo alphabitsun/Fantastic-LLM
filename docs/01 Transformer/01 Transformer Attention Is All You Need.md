@@ -2,6 +2,7 @@
 
 ![](https://picx.zhimg.com/80/v2-6f971cd754692ea6311f6f115837a09e_1440w.png?source=d16d100b)
 
+**论文**：https://arxiv.org/abs/1706.03762
 
 # 1. 简述
 
@@ -62,9 +63,9 @@ Transformer 模型总体的框架如下图所示：总体来说，还是和 Enco
 
 ### 2.1.1 Encoder的输入
 
-首先输入的句子会先利用Tonenizer进行分词，例如“我有一只猫。”，会被分词为”['我', '有', '一只', '猫']”， 然后对每个token进行embedding，形成Embedding矩阵 $E^{4\times512}$（文中的embedding维度为512）；并对每个token进行位置编码，得到输入数据的Position Embedding矩阵 $P^{4\times512}$；接着将两个矩阵相加，形成最终的输入矩阵 $X^{4\times512}$。
+首先输入的句子会先利用Tonenizer进行分词，例如“我有一只猫。”，会被分词为”['我', '有', '一只', '猫']”， 然后对每个token进行embedding，形成Embedding矩阵 $E^{4\times512}$（文中的embedding维度为 $512$）；并对每个token进行位置编码，得到输入数据的Position Embedding矩阵 $P^{4\times512}$；接着将两个矩阵相加，形成最终的输入矩阵 $X^{4\times512}$。
 
-![Untitled](./Untitled.png)
+![Untitled](./images/Untitled.png)
 
 ### 2.1.2 Decoder的输入
 
@@ -77,12 +78,12 @@ Transformer 模型总体的框架如下图所示：总体来说，还是和 Enco
 
 Transformer 中除了单词的 Embedding，还需要使用位置 Embedding 表示单词出现在句子中的位置。**因为 Transformer 不采用 RNN 的结构，而是使用全局信息，不能利用单词的顺序信息，而这部分信息对于 NLP 来说非常重要。**所以 Transformer 中使用位置 Embedding 保存单词在序列中的相对或绝对位置。
 
-位置 Embedding 可以通过训练得到，也可以使用某种公式计算得到（其他方式：旋转位置编码）。在 Transformer 中采用了后者。这有两点好处：
+位置 Embedding 可以通过训练得到，也可以使用某种公式计算得到（其他方式：旋转位置编码RoPE）。在 Transformer 中采用了后者。这有两点好处：
 
 - **使得 PE 能够适应比训练集里面所有句子更长的句子**，假设训练集里面最长的句子是有 20 个单词，突然来了一个长度为 21 的句子，则使用公式计算的方法可以计算出第 21 位的 Embedding。
-- **可以让模型容易地计算出相对位置**，对于固定长度的间距 $k$，** $PE(pos+k)$** 可以用 ** $PE(pos)$** 计算得到。因为 $Sin(A+B) = Sin(A)Cos(B) + Cos(A)Sin(B)$， $Cos(A+B) = Cos(A)Cos(B) - Sin(A)Sin(B)$。
+- **可以让模型容易地计算出相对位置**，对于固定长度的间距 $k$， $PE(pos+k)$ 可以用  $PE(pos)$ 计算得到。因为 $Sin(A+B) = Sin(A)Cos(B) + Cos(A)Sin(B)$， $Cos(A+B) = Cos(A)Cos(B) - Sin(A)Sin(B)$。
 
-### 2.1.4 Embedding demo
+### 2.1.4 Embedding code demo
 
 ```python
 import numpy as np
@@ -135,14 +136,7 @@ print(embedded_sequence_with_position)
 
 ### 2.2.1 **Self-Attention**
 
-~~首先说下 Attention 和 Self-Attention 的区别：~~
-
-> ~~以 Encoder-Decoder 框架为例，输入 Source 和输出 Target 内容是不一样的，比如对于英-中机器翻译来说，Source是英文句子，Target是对应的翻译出的中文句子，Attention 发生在 Target 的元素 Query 和 Source 中的所有元素之间。~~
- Self Attention~~，指的不是 Target 和 Source 之间的 Attention 机制，而~~是指 Source 内部元素之间或者 Target 内部元素之间发生的Attention 机制。
-~~两者具体计算过程是一样的，只是计算对象发生了变化而已。~~
-> 
-
-Self-Attention 的本质就是探索当前序列中每一个token对当前 token的影响程度（也即当前token对序列中的其他所有token的关联程度）。例如： ”这只动物没有过马路，因为它太累了“，这里的 ‘它’ 到底代表的是 ‘动物’ 还是 ‘马路’ 呢，对于我们来说能很简单的判断出来，但是对于机器来说，是很难判断的，Self-Attention 就能够让机器把 ‘它’ 和 ‘动物’ 联系起来，接下来我们看下详细的处理过程。
+Self-Attention 的本质就是探索当前序列中每一个token对当前token的影响程度（也即当前token对序列中的其他所有token的关联程度）。例如： ”这只动物没有过马路，因为它太累了“，这里的 ‘它’ 到底代表的是 ‘动物’ 还是 ‘马路’ 呢，对于我们来说能很简单的判断出来，但是对于机器来说，是很难判断的，Self-Attention 就能够让机器把 ‘它’ 和 ‘动物’ 联系起来，接下来我们看下详细的处理过程。
 
 **1、**首先，self-attention 会计算出三个新的向量，在论文中，向量的维度是64维，我们把这三个向量分别称为**Query**、**Key**、**Value**。这三个向量是用 embedding 向量（包含位置编码）分别与一个矩阵相乘得到的结果，这个矩阵是随机初始化的，维度为  $(d_k \ or \ d_v, d_{model})=(64, 512)$ 。注意注意， $d_k$是向量 query 或 key 的维度，这两个向量的维度一定是一样的，因为要做点积。但是 value 的维度和向量 query 或 key 的维度不一定相同。第二个维度需要和 embedding 的维度一样，其值在模型训练的过程中会一直进行更新，得到的这三个向量的维度是64，是低于embedding维度的。
 
@@ -184,7 +178,7 @@ Self-Attention 的本质就是探索当前序列中每一个token对当前 token
 
 ![](https://pica.zhimg.com/80/v2-3cd76d3e0d8a20d87dfa586b56cc1ad3_1440w.png?source=d16d100b)
 
-同样以 $X^{4\times512}$的输入数据为例，在每个self-attention层中会分别与 $W_q^{512\times64}$， $W_k^{512\times64}$， $W_v^{512\times64}$矩阵相乘得到 $Q^{4\times64}$， $K^{4\times64}$， $V^{4\times64}$矩阵，然后 $Q$， $K$， $V$按照公式进行计算得到维度为（4*64）的矩阵，因为有8个head，所以8个矩阵会进行横向拼接得到（4*512）的矩阵，然后通过一个线性层得到（4*512），通过残差连接以及normalization后进入前馈神经网络，得到输出（4* 512），至此一个encoder 的输出和输入维度一样了，接着传入下一层encoder中。
+同样以 $X^{4\times512}$的输入数据为例，在每个self-attention层中会分别与 $W_q^{512\times64}$， $W_k^{512\times64}$， $W_v^{512\times64}$矩阵相乘得到 $Q^{4\times64}$， $K^{4\times64}$， $V^{4\times64}$矩阵，然后 $Q$， $K$， $V$按照公式进行计算得到维度为 $4*64$的矩阵，因为有8个head，所以8个矩阵会进行横向拼接得到 $4*512$的矩阵，然后通过一个线性层得到 $4*512$，通过残差连接以及Normalization后进入前馈神经网络，得到输出 $4*512$，至此一个encoder 的输出和输入维度一样了，接着传入下一层encoder中。
 
 ## 2.3 **Decoder 模块**
 
@@ -202,33 +196,31 @@ Self-Attention 的本质就是探索当前序列中每一个token对当前 token
 
 Decoder block 的第一个 Multi-Head Attention 采用了 Masked 操作，因为在翻译的过程中是顺序翻译的，即翻译完第 i 个单词，才可以翻译第 i+1 个单词。通过 Masked 操作可以防止第 i 个单词知道 i+1 个单词之后的信息。下面以 "我有一只猫" 翻译成 "I have a cat" 为例，了解一下 Masked 操作。
 
-~~下面的描述中使用了类似 Teacher Forcing 的概念，不熟悉 Teacher Forcing 的童鞋可以参考以下上一篇文章Seq2Seq 模型详解。在 Decoder 的时候，是需要根据之前的翻译，求解当前最有可能的翻译，如下图所示。首先根据输入 "<Begin>" 预测出第一个单词为 "I"，然后根据输入 "<Begin> I" 预测下一个单词 "have"。~~
-
 ### 2.3.2 **第一个 Multi-Head Attention**
 
 Decoder 可以在训练的过程中使用 **Teacher Forcing** 并且并行化训练，即将正确的单词序列 (<Begin> I have a cat) 和对应输出 (I have a cat <end>) 传递到 Decoder。那么在预测第 i 个输出时，就要将第 i+1 之后的单词掩盖住，**注意 Mask 操作是在 Self-Attention 的 Softmax 之前使用的，下面用 0 1 2 3 4 5 分别表示 "<Begin> I have a cat <end>"。**
 
 **第一步：**是 Decoder 的输入矩阵和 **Mask** 矩阵，输入矩阵包含 "<Begin> I have a cat" (0, 1, 2, 3, 4) 五个单词的表示向量，**Mask** 是一个 5×5 的矩阵。在 **Mask** 可以发现单词 0 只能使用单词 0 的信息，而单词 1 可以使用单词 0, 1 的信息，即只能使用之前的信息。
 
-![Untitled](01%20Transformer%20Attention%20Is%20All%20You%20Need%20e27de68b3b2042f5ac198f5d91641ffa/Untitled%201.png)
+![Untitled](./images/Untitled%201.png)
 
-**第二步：** 接下来的操作和之前的 Self-Attention 一样，通过输入矩阵 $X$计算得到** $Q$**，** $K$**，** $V$**矩阵。然后计算 $Q$和 $K^T$的乘积 $QK^T$
+**第二步：** 接下来的操作和之前的 Self-Attention 一样，通过输入矩阵 $X$计算得到 $Q$**，** $K$**，** $V$矩阵。然后计算 $Q$和 $K^T$的乘积 $QK^T$
 
-![Untitled](01%20Transformer%20Attention%20Is%20All%20You%20Need%20e27de68b3b2042f5ac198f5d91641ffa/Untitled%202.png)
+![Untitled](./images/Untitled%202.png)
 
 **第三步：**在得到 $QK^T$之后需要进行 Softmax，计算 attention score，我们在 Softmax 之前需要使用**Mask**矩阵遮挡住每一个单词之后的信息，遮挡操作如下：
 
-![Untitled](01%20Transformer%20Attention%20Is%20All%20You%20Need%20e27de68b3b2042f5ac198f5d91641ffa/Untitled%203.png)
+![Untitled](./images/Untitled%203.png)
 
-**第四步：**使用**Mask $QK^T$**与矩阵** $V$**相乘，得到输出** $Z$**，则单词 1 的输出向量 $Z_1$是只包含单词 1 信息的。
+**第四步：**使用**Mask $QK^T$**与矩阵 $V$**相乘，得到输出** $Z$，则单词 1 的输出向量 $Z_1$是只包含单词 1 信息的。
 
-![Untitled](01%20Transformer%20Attention%20Is%20All%20You%20Need%20e27de68b3b2042f5ac198f5d91641ffa/Untitled%204.png)
+![Untitled](./images/Untitled%204.png)
 
-**第五步：**通过上述步骤就可以得到一个 Mask Self-Attention 的输出矩阵 $Z$，然后和 Encoder 类似，通过 Multi-Head Attention 拼接多个输出 $Z$然后计算得到第一个 Multi-Head Attention 的输出** $Z$**，** $Z$**与Decoder输入** $X$**维度一样。
+**第五步：**通过上述步骤就可以得到一个 Mask Self-Attention 的输出矩阵 $Z$，然后和 Encoder 类似，通过 Multi-Head Attention 拼接多个输出 $Z$然后计算得到第一个 Multi-Head Attention 的输出 $Z$**，** $Z$**与Decoder输入** $X$维度一样。
 
 ### 2**.3.3 第二个 Multi-Head Attention**
 
-Decoder block 第二个 Multi-Head Attention 变化不大， 主要的区别在于其中 Self-Attention 的 ** $K$， $V$**矩阵不是使用 上一个 Decoder block 的输出计算的，而是使用 **Encoder 的编码信息矩阵 C** 计算的。
+Decoder block 第二个 Multi-Head Attention 变化不大， 主要的区别在于其中 Self-Attention 的 $K$， $V$矩阵不是使用 上一个 Decoder block 的输出计算的，而是使用 **Encoder 的编码信息矩阵 C** 计算的。
 
 根据 Encoder 的输出 **C**计算得到 **K, V**，根据上一个 Decoder block 的输出 **Z** 计算 **Q** (如果是第一个 Decoder block 则使用输入矩阵 **X** 进行计算)，后续的计算方法与之前描述的一致。
 
@@ -238,19 +230,19 @@ Decoder block 第二个 Multi-Head Attention 变化不大， 主要的区别在�
 
 1. 首先会被分词为[This, animal, didn't, cross, the, road, because, it was, too, tired, .]并加上起始结束符进行embedding（包括位置编码）,得到输入矩阵 $Y^{13\times512}$
 2. 计算Q，K， V矩阵，三个矩阵的维度都是 $13\times64$
-3. 计算attention score，这里先计算 $QK^T$，得到矩阵 $13\times13$，然后与mask矩阵按位相乘得到矩阵 $13\times13$，经过Softmax 后与V相乘得到 $Z^{13\times64}$。多头拼接并处理后得到第一模块的输出 $Z^{13\times512}$
+3. 计算attention score，这里先计算 $QK^T$，得到矩阵 $13\times13$，然后与mask矩阵按位相乘得到矩阵 $13\times13$，经过Softmax 后与 $V$相乘得到 $Z^{13\times64}$。多头拼接并处理后得到第一模块的输出 $Z^{13\times512}$
 4. 进入decoder的第二个模块，首先通过encoder的输出 $C^{12\times512}$计算K和V矩阵得到 $K^{12\times64}$和 $V^{12\times64}$，通过decoder上一模块的输出 $Z^{13\times512}$计算得到 $Q^{13*64}$，然后进行scaled dot-product attention， $QK^T ->(13\times12)$，再乘 $V$得到输出矩阵 $13\times64$，注意因为分词长度不同，encoder的输入长度（12）和decoder的输入长度（13）就有可能不同，也没必要相同，只需要保证K和V的维度一样就可以了。
 5. 多头拼接并进行处理后得到第二个模块的最终输出 $Z^{13\times512}$， 至此和输入数据的维度一致了。
 
-前文提到，在训练时采用了**Teacher Forcing方法**，即在训练中使用到了真是的标签数据的，是为了保证训练的效果不至于偏离，与预测时步骤不完全相同。
+前文提到，在训练时采用了**Teacher Forcing方法**，即在训练中使用到了真实的标签数据的，是为了保证训练的效果不至于偏离，与预测时步骤不完全相同。
 
 ### 2.3.4 **在做预测时，步骤如下：**
 
 1. 给 Decoder 输入 Encoder 对整个句子 embedding 的结果和一个特殊的开始符号</s>。Decoder 将产生预测，在我们的例子中应该是 I。
-2. 给 Decoder 输入 Encoder 的 embedding 结果和</s> I，在这一步 Decoder 应该产生预测 am。
-3. 给 Decode r输入 Encoder 的 embedding 结果和</s> I am，在这一步 Decoder 应该产生预测a。
-4. 给 Decoder 输入 Encoder 的 embedding 结果和</s> I am a，在这一步 Decoder 应该产生预测student。
-5. 给 Decoder 输入 Encoder 的 embedding 结果和</s> I am a student, Decoder 应该生成句子结尾的标记，Decoder 应该输出</eos>。
+2. 给 Decoder 输入 Encoder 的 embedding 结果和</s> I，在这一步 Decoder 应该产生预测 have。
+3. 给 Decode r输入 Encoder 的 embedding 结果和</s> I have，在这一步 Decoder 应该产生预测a。
+4. 给 Decoder 输入 Encoder 的 embedding 结果和</s> I have a，在这一步 Decoder 应该产生预测cat。
+5. 给 Decoder 输入 Encoder 的 embedding 结果和</s> I have a cat, Decoder 应该生成句子结尾的标记，Decoder 应该输出</eos>。
 6. 然后 Decoder 生成了</eos>，翻译完成。
 
 ## 2.4 **输出层**
@@ -264,7 +256,7 @@ Decoder block 第二个 Multi-Head Attention 变化不大， 主要的区别在�
 ### 优点
 
 - 每层计算**复杂度比RNN要低**，可以进行**并行计算**。
-- 从计算一个序列长度为 $n$的信息要经过的路径长度来看，CNN需要增加卷积层数来扩大视野，RNN需要从 $1$ 到 $n$ 逐个进行计算，而Self-attention只需要一步矩阵计算就可以。Self-Attention可以比RNN**更好地解决长时依赖问题**。当然如果计算量太大，也可以用窗口限制Self-Attention的计算数量。
+- 从计算一个序列长度为 $n$的信息要经过的路径长度来看，CNN需要增加卷积层数来扩大视野，RNN需要从 $1$ 到 $n$ 逐个进行计算，而Self-Attention只需要一步矩阵计算就可以。Self-Attention可以比RNN**更好地解决长时依赖问题**。当然如果计算量太大，也可以用窗口限制Self-Attention的计算数量。
 - 从作者在附录中给出的例子可以看出，Self-Attention**模型更可解释，Attention结果的分布表明了该模型学习到了一些语法和语义信息**。
 
 ### ~~缺点~~
@@ -284,8 +276,6 @@ Decoder block 第二个 Multi-Head Attention 变化不大， 主要的区别在�
     
 
 # 5. **参考资料：**
-
-很多资料上的图都是来自于这个英文博客。
 
 - [Transformer模型详解](https://blog.csdn.net/u012526436/article/details/86295971)
 - [Transformer学习总结——原理篇](http://www.uml.org.cn/ai/201911074.asp)
