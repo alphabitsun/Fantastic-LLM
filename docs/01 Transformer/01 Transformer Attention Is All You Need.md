@@ -1,12 +1,3 @@
----
-layout: default
-title: Home
----
-
-<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-
-
 # 01. Transformer: Attention Is All You Need
 
 ![](https://picx.zhimg.com/80/v2-6f971cd754692ea6311f6f115837a09e_1440w.png?source=d16d100b)
