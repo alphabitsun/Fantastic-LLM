@@ -30,19 +30,19 @@ $$\text{Total Parameters} = V \times d_{\text{model}} + L \times \left( 4 \times
 
 在 **BERT&#x20;**&#x4E2D;，$V=30522, d_{\text{ff}}=4\cdot d_{\text{model}}$，带入可得$\text{BERT}_\text{BASE}$参数&#x91CF;**`110M`**，$\text{BERT}_\text{LARGE}$参数&#x91CF;**`340M`**
 
-* **BERT 的输入表示**
+### 1.1 **BERT 的输入表示**
 
-**BERT&#x20;**&#x7684;输入表示如图下图所示。比如输入的是两个句&#x5B50;**`my dog is cute`**，**`he likes playing`**。这里采用类似 **GPT&#x20;**&#x7684;两个句子的表示方法，首先会在第一个句子的开头增加一个特殊的Token **`[CLS]`**，&#x5728;**`cute`**&#x7684;后面增加一&#x4E2A;**`[SEP]`**&#x8868;示第一个句子结束，&#x5728;**`##ing`**&#x540E;面也会增加一&#x4E2A;**`[SEP]`**。这里的分词会&#x628A;**`playing`**&#x5206;&#x6210;**`play`**&#x548C;**`##ing`**&#x4E24;个 Token，这是把词分成更细粒度的 WordPiece方法一种解决未登录词的常见办法。
+![](./images/screenshot-20250904-090117.png)
 
-接着对每个 Token 进行3个 Embedding：**词的 Embedding**、**位置的 Embedding&#x20;**&#x548C; **Segment 的 Embedding**。词的 Embedding 和位置的 Embedding之前都进行了详细的介绍。Segment 只有两个，要么是属于第一个句子 Segment 要么属于第二个句子，不管那个句子，它都对应一个 Embedding 向量。同一个句子的Segment Embedding 是共享的，这样它能够学习到属于不同 Segment 的信息。对于情感分类这样的任务，只有一个句子，因此 Segment id 总是 0；而对于 Entailment 任务，输入是两个句子，因此 Segment 是 0 或者 1。
+**BERT&#x20;**&#x7684;输入表示如上图所示。比如输入的是两个句&#x5B50;**`my dog is cute`**，**`he likes playing`**。这里采用两个句子拼接的表示方法，首先会在第一个句子的开头增加一个特殊的Token **`[CLS]`**，&#x5728;**`cute`**&#x7684;后面增加一&#x4E2A;**`[SEP]`**&#x8868;示第一个句子结束，&#x5728;**`##ing`**&#x540E;面也会增加一&#x4E2A;**`[SEP]`**。这里的分词会&#x628A;**`playing`**&#x5206;&#x6210;**`play`**&#x548C;**`##ing`**&#x4E24;个 Token，这是把词分成更细粒度的 WordPiece方法一种解决未登录词的常见办法。
+
+接着对每个 Token 进行3个 Embedding：**词的 Embedding**、**位置的 Embedding&#x20;**&#x548C; **Segment 的 Embedding**。词的 Embedding 和位置的 Embedding在前文Transformer中都进行了详细的介绍。Segment 只有两个，要么是属于第一个句子 Segment 要么属于第二个句子，不管哪个句子，它都对应一个 Embedding 向量。同一个句子的Segment Embedding 是共享的，这样它能够学习到属于不同 Segment 的信息。对于情感分类这样的任务，只有一个句子，因此 Segment id 总是 0；而对于 Entailment 任务，输入是两个句子，因此 Segment 是 0 或者 1。
 
 **BERT&#x20;**&#x6A21;型要求有一个固定的 Sequence 的长度，如果不够就在后面 padding，否则就截取掉多余的Token。第一个 Token 总是特殊&#x7684;**`[CLS]`**，会编码整个句子的语义。
 
-![]()
+### 1.2 **代码实现**
 
-**代码实现**
-
-**实现 Embedding**
+#### 1.2.1 **实现 Embedding**
 
 ```python
 class TokenEmbedding(nn.Embedding):
@@ -95,7 +95,7 @@ class BERTEmbedding(nn.Module):
         return self.dropout(x)
 ```
 
-**实现 Attention**
+#### 1.2.2 **实现 Attention**
 
 ```python
 class Attention(nn.Module):
@@ -145,7 +145,7 @@ class MultiHeadedAttention(nn.Module):
         return self.output_linear(x)
 ```
 
-**实现 FFN**
+#### 1.2.3  **实现 FFN**
 
 ```python
 class GELU(nn.Module):
@@ -166,7 +166,7 @@ class PositionwiseFeedForward(nn.Module):
         return self.w_2(self.dropout(self.activation(self.w_1(x))))
 ```
 
-**实现 Transformer Encoder**
+#### 1.2.4 **实现 Transformer Encoder**
 
 ```python
 class SublayerConnection(nn.Module):
@@ -201,7 +201,7 @@ class TransformerBlock(nn.Module):
         return self.dropout(x)
 ```
 
-**实现完整的 BERT 类**
+#### 1.2.5 **实现完整的 BERT 类**
 
 ```python
 class BERT(nn.Module):
@@ -243,11 +243,9 @@ class BERT(nn.Module):
         return x
 ```
 
-* **BERT 的预训练**
+### 1.3 **BERT 的预训练**
 
 **BERT&#x20;**&#x91C7;用二段式训练方法：第一阶段：使用易获取的大规模无标签语料，来训练基础语言模型；第二阶段：根据指定任务的少量带标签训练数据进行微调训练。不同于 **GPT&#x20;**&#x7B49;标准语言模型使用$P(w_i|w_1,⋯,w_{i−1})$为目标函数进行训练，能看到全局信息的 **BERT&#x20;**&#x4F7F;用$P(w_i|w_1,\cdots ,w_{i−1},w_{i+1},\cdots,w_n)$为目标函数进行训练。并且 **BERT&#x20;**&#x7528;**语言掩码模型 MLM** 方法训练词的语义理解能力；用**下句预测 NSP** 方法训练句子之间的理解能力，从而更好地支持下游任务。**BERT&#x20;**&#x5728;预训练阶段使用了前文所述的两种训练方法，在真实训练中一般是两种方法混合使用。
-
-![]()
 
 **语言掩码模型 MLM**
 
