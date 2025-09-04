@@ -333,43 +333,35 @@ BERT 判断句子 B 中答案位置的做法是，将句子 B 中的每一个次
 
 **RoBERTa**（A Robustly Optimized BERT Pretraining Approach） 模型是 **BERT** 的改进版，主要有以下几个方面：
 
-1. **模型训练**
+### 2.1 **模型训练**
 
-**更大的 batch size**
+* **更大的 batch size**
 
-**BERT&#x20;**&#x4E2D;**`batch_size=256，训练 1M steps`**
+**BERT&#x20;**&#x4E2D;**`batch_size=256，训练 1M steps`**，**RoBERTa&#x20;**&#x4E2D;两个设置：**`batch_size=2k，训练 125k steps`**、**`batch_size=8k，训练 31k steps`**。最后 **RoBERTa&#x20;**&#x5C06; adam 的 0.999 改成了 **0.98**，令 **batch\_size=8k**，训练 **500k steps**。
 
-**RoBERTa&#x20;**&#x4E2D;两个设置：**`batch_size=2k，训练 125k steps`**、**`batch_size=8k，训练 31k steps`**。最后 **RoBERTa&#x20;**&#x5C06; adam 的 0.999 改成了 **0.98**，令 **batch\_size=8k**，训练 **500k steps**
+* **更多的训练数据**
 
-**更多的训练数据**
+**BERT** 使&#x7528;**`16G`**&#x7684;训练文本，**RoBERTa&#x20;**&#x91C7;用&#x4E86;**`160G`**&#x7684;训练文本：**Book-Corpus 和 Wikipedia**：**BERT** 的训练集，大&#x5C0F;**`16GB`**。**CC-NEWS**：6300 万篇英文新闻，过滤之后大&#x5C0F;**`76 GB`**。 **OPENWEBTEXT**：Reddit 上的网页内容，大&#x5C0F;**`38 GB`** 。 **STORIES**：CommonCrawl 数据集的一个子集，大&#x5C0F;**`31GB`**。
 
-**BERT** 使&#x7528;**`16G`**&#x7684;训练文本
-
-**RoBERTa&#x20;**&#x91C7;用&#x4E86;**`160G`**&#x7684;训练文本：**Book-Corpus 和 Wikipedia**：**BERT** 的训练集，大&#x5C0F;**`16GB`**。**CC-NEWS**：6300 万篇英文新闻，过滤之后大&#x5C0F;**`76 GB`**。 **OPENWEBTEXT**：Reddit 上的网页内容，大&#x5C0F;**`38 GB`** 。 **STORIES**：CommonCrawl 数据集的一个子集，大&#x5C0F;**`31GB`**
-
-* **下句预测 NSP 任务**
+### 2.2 **下句预测 NSP 任务**
 
 原始的 **BERT&#x20;**&#x5305;含 2 个任务，预测被 mask 掉的单词和下一句预测。**RoBERTa&#x20;**&#x4E0E;其他工作一样，质疑下句预测 NSP 的必要性，**RoBERTa&#x20;**&#x8BBE;计了以下 4 种训练方式：
 
-**SEGMENT-PAIR + NSP**
+* **SEGMENT-PAIR + NSP**
 
-输入包含两部分，每个部分是来自同一文档或者不同文档的 Segment ，Segment 是连续的多个句子，这两个Segment 的 token 总数少于 512 。预训练包含 MLM 任务和 NSP 任务。这是原始 BERT 的做法
+输入包含两部分，每个部分是来自同一文档或者不同文档的 Segment ，Segment 是连续的多个句子，这两个Segment 的 token 总数少于 512 。预训练包含 MLM 任务和 NSP 任务。这是原始 BERT 的做法。
 
+* **SENTENCE-PAIR + NSP**
 
+输入包含两部分，每个部分是来自同一个文档或者不同文档的单个句子，这两个句子的 token 总数少于 512。由于这些输入明显少于 512 个tokens，因此增加 batch size 的大小，以使 token 总数保持与SEGMENT-PAIR + NSP 相似。预训练包含 MLM 任务和 NSP 任务。
 
-**SENTENCE-PAIR + NSP**
+* **FULL-SENTENCES**
 
-输入包含两部分，每个部分是来自同一个文档或者不同文档的单个句子，这两个句子的 token 总数少于 512。由于这些输入明显少于 512 个tokens，因此增加 batch size 的大小，以使 token 总数保持与SEGMENT-PAIR + NSP 相似。预训练包含 MLM 任务和 NSP 任务
+输入只有一部分，来自同一个文档或者不同文档的连续多个句子，token 总数不超过 512。输入可能跨越文档边界，如果跨文档，则在上一个文档末尾添加文档边界 token 。预训练不包含 NSP 任务。
 
-**FULL-SENTENCES**
+* **DOC-SENTENCES**
 
-输入只有一部分，来自同一个文档或者不同文档的连续多个句子，token 总数不超过 512。输入可能跨越文档边界，如果跨文档，则在上一个文档末尾添加文档边界 token 。预训练不包含 NSP 任务
-
-
-
-**DOC-SENTENCES**
-
-输入只有一部分，来自同一个文档的连续句子，不需要跨越文档边界，token 总数不超过 512。在文档末尾附近采样的输入可以短于 512 个 token， 在这些情况下动态增加 batch size 大小以达到与 FULL-SENTENCES 相同的 token 总数。预训练不包含 NSP 任务
+输入只有一部分，来自同一个文档的连续句子，不需要跨越文档边界，token 总数不超过 512。在文档末尾附近采样的输入可以短于 512 个 token， 在这些情况下动态增加 batch size 大小以达到与 FULL-SENTENCES 相同的 token 总数。预训练不包含 NSP 任务。
 
 **BERT&#x20;**&#x91C7;用的是 **SEGMENT-PAIR** 的输入格式，从实验结果来看，如果在采用 NSP loss 的情况下，**SEGMENT-PAIR** 是优于 **SENTENCE-PAIR** 的。并且单个句子会损害下游任务的性能，可能是因为模型无法学习远程依赖。
 
@@ -377,7 +369,7 @@ BERT 判断句子 B 中答案位置的做法是，将句子 B 中的每一个次
 
 实验还发现 **DOC-SENTENCES** 的性能略好 **FULL-SENTENCES**。但是 **DOC-SENTENCES** 中位于文档末尾的样本可能小于 512 个 token。为了保证每个 batch 的 token 总数维持在一个较高水平，需要动态调整 batch-size 。为了处理方便，后面采用 **FULL-SENTENCES&#x20;**&#x8F93;入格式。
 
-* **动态掩码**
+### 2.3 **动态掩码**
 
 **原始静态mask**
 
@@ -393,13 +385,13 @@ BERT 判断句子 B 中答案位置的做法是，将句子 B 中的每一个次
 
 实验结果表明修改版的静态 mask 略好于 **BERT&#x20;**&#x539F;始静态 mask；动态 mask 又略好了静态 mask。基于上述结果的判断，及其动态 mask 在效率上的优势，**RoBERTa&#x20;**&#x540E;续的实验统一采用动态 mask。
 
-* **文本编码**
+### 2.4 **文本编码**
 
 BPE（Byte-Pair Encoding）是字符级和词级别表征的混合，支持处理自然语言语料库中的众多常见词汇。原版的 BERT 实现使用字符级别的 BPE 词汇，大小为 30K，是在利用启发式分词规则对输入进行预处理之后学得的。**RoBERTa** 没有采用这种方式，而是考虑用更大的 byte 级别 BPE 词汇表来训练 BERT，这一词汇表包含 50K 的 subword 单元，且没有对输入作任何额外的预处理或分词。
 
 当采用 bytes-level 的 BPE 之后，词表大小从原始 BERT 的 3 万增加到 5 万。这分别为 BERT-base 和 BERT-large 增加了 1500 万和 2000 万额外的参数。
 
-**总结**
+### 2.5 **总结**
 
 **RoBERTa** 发现，通过更长时间地训练模型，在更多数据上使用更大的批次，移除下一句预测目标，训练更长的序列，并动态更改应用于训练数据的屏蔽模式可以显着提高性能。**RoBERTa** 改进的预训练方法在 GLUE、RACE 和 SQuAD 上取得了最好的结果。
 
