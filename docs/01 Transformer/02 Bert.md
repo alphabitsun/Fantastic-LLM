@@ -399,13 +399,13 @@ BPE（Byte-Pair Encoding）是字符级和词级别表征的混合，支持处�
 
 **DeBERTa**（**D**ecoding-**e**nhanced **BERT** with disentangled **a**ttention）模型是微软在 2021 年提出的，到现在其实已经迭代了三个版本，第一版发布的时候在 SuperGLUE 排行榜上就已经获得了超越人类的水平。目前，一些比较有挑战的 NLP 任务，甚至是 NLG 任务都会用 **DeBERTa** 模型当成预训练模型，进一步微调。
 
-**DeBERTa** 增加了位置-内容与内容-位置的自注意力增强位置和内容之间的依赖，用 **EMD** 缓解 **BERT&#x20;**&#x9884;训练和精调因为 MASK 造成的不匹配问题。因为在 **BERT** 中，一组词的 Attention 不光取决于内容，还和它们的相对位置有关，比如挨在一起时的依赖关系比不在一起时要强。另一方面，预训练和微调的不匹配，因为微调时没有 MASK。针对这些问题，**DeBERTa** 有针对性地提出解决方案：
+**DeBERTa** 增加了位置-内容与内容-位置的自注意力，增强位置和内容之间的依赖，用 **EMD** 缓解 **BERT&#x20;**&#x9884;训练和精调因为 MASK 造成的不匹配问题。因为在 **BERT** 中，一组词的 Attention 不光取决于内容，还和它们的相对位置有关，比如挨在一起时的依赖关系比不在一起时要强。另一方面，预训练和微调的不匹配，因为微调时没有 MASK。针对这些问题，**DeBERTa** 有针对性地提出解决方案：
 
 > * **Disentangled Attention**：增加计&#x7B97;**`位置-内容`**&#x548C;**`内容-位置`**&#x6CE8;意力
 >
 > * **Enhanced Mask Decoder**：用 **EMD&#x20;**&#x6765;代替原 BERT 的 Softmax 层预测遮盖的 Token。因为在微调时一般会在 **BERT&#x20;**&#x7684;输出后接一个特定任务的 Decoder，但是在预训练时却并没有这个 Decoder；所以 **DeBERTa** 在预训练时用一个两层的 Transformer decoder 和一个 Softmax 作为 Decoder
 
-* **注意力解耦**
+#### 3.1 **注意力解耦**
 
 在 **BERT&#x20;**&#x4E2D;，每个 token 只用一个向量表示，该向量为内容嵌入 content embedding 和位置嵌入 position embedding 之和，而 **DeBERTa** 则对 token embedding 进行解耦，用 content 和 relative position 两个向量来表示一个 token。对于 token $i$，**DeBERTa&#x20;**&#x5C06;其表示为内容$\{H_i\}$和相对位置$\{P_{i|j}\}$，那么token $i$和 token $j$之间的 attention score 可以被分解为 4 个部分：
 
@@ -430,9 +430,9 @@ $$\delta(i,j) =
 i-j+1 & \text{for others}
 \end{cases}$$
 
-然后可以表示出具有相对位置偏差的分散自注意力，具体计算流程图如右图所示：
+然后可以表示出具有相对位置偏差的分散自注意力，具体计算流程图如下图所示：
 
-![]()
+<img src="./images/screenshot-20250904-105414.png" style="zoom:33%;" />
 
 $$Q_c = HW_{q,c}, K_c = HW_{k,c}, V_c = HW_{v,c}, Q_r = PW_{q,r}, K_r = PW_{k,r}$$
 
@@ -445,11 +445,9 @@ $\tilde{A}_{i,j}$是注意矩阵$\tilde{A}$的元素，表示从 token $i$到 to
 
 最后得到了注意力权重矩阵$\tilde{A}$，因为这下分别是三组$Q, K$相乘的求和，所以收缩时的维度也翻了三倍，要除以$\sqrt{3d}$，之后再与$V$相乘。
 
-* **增强的掩码解码器**
+#### 3.2 **增强的掩码解码器**
 
 **DeBERTa&#x20;**&#x548C; **BERT&#x20;**&#x6A21;型一样，也是使用 MLM 进行预训练的，即模型被训练为使用 mask token 周围的单词来预测 mask 词应该是什么。 **DeBERTa&#x20;**&#x5C06;上下文的内容和位置信息用于 MLM。 解耦注意力机制已经考虑了上下文词的内容和相对位置，但没有考虑这些词的绝对位置，这在很多情况下对于预测至关重要。
-
-
 
 **例**：给定一个句&#x5B50;**`a new store opened beside the new mall`**，并 mask &#x6389;**`store`**&#x548C;**`mall`**&#x4E24;个词以进行预测。 仅使用局部上下文，即相对位置和周围的单词，不足以使模型在此句子中区&#x5206;**`store`**&#x548C;**`mall`**，因为两者都以相同的相对位置&#x5728;**`new`**&#x5355;词之后。 为了解决这个限制，模型需要考虑绝对位置，作为相对位置的补充信息。 例如句子的主题&#x662F;**`store`**&#x800C;不&#x662F;**`mall`**。 这些语法上的细微差别在很大程度上取决于单词在句子中的绝对位置。
 
@@ -459,7 +457,7 @@ $\tilde{A}_{i,j}$是注意矩阵$\tilde{A}$的元素，表示从 token $i$到 to
 
 目前有两种合并绝对位置的方法。 **BERT&#x20;**&#x6A21;型在输入层中合并了绝对位置。 但 **DeBERTa&#x20;**&#x5728;所有 Transformer 层之后将它们合并，然后在 Softmax 层之前进行 mask token 预测，如右图所示。**DeBERTa&#x20;**&#x6355;获了所有 Transformer 层中的相对位置，同时解码被 mask 的单词时将绝对位置用作补充信息。这就是**DeBERTa&#x20;**&#x589E;强的掩码解码器 **EMD**。
 
-* **虚拟对抗训练方法**
+#### 3.3 **虚拟对抗训练方法**
 
 规模不变微调 **SiFT**（**S**cale-**i**nvariant **F**ine-**T**uning）算法一种新的虚拟对抗训练算法， 主要用于模型的微调。
 
@@ -469,13 +467,13 @@ $\tilde{A}_{i,j}$是注意矩阵$\tilde{A}$的元素，表示从 token $i$到 to
 
 受层归一化的启发，**DeBERTa&#x20;**&#x63D0;出了 **SiFT&#x20;**&#x7B97;法，该算法通过应用扰动的归一化词嵌入来提高训练稳定性。在将 **DeBERTa&#x20;**&#x5FAE;调到下游 NLP 任务时，**SiFT&#x20;**&#x9996;先将单词嵌入向量归一化为随机向量，然后将扰动应用于归一化的嵌入向量。实验表明，归一化大大改善了微调模型的性能。
 
-**总结**
+#### 3.4 **总结**
 
 **DeBERTa&#x20;**&#x6A21;型使用&#x4E86;**`注意力解耦机制`**&#x548C;**`增强的掩码解码器`**&#x4E24;种新技术改进了 **BERT&#x20;**&#x548C; **RoBERTa&#x20;**&#x6A21;型，同时还引入&#x4E86;**`虚拟对抗训练方法`**&#x4EE5;提高模型的泛化能力。结果表明，这些技术显著提高了模型预训练的效率以及自然语言理解（NLU）和自然语言生成（NLG）下游任务的性能：
 
 与$\text{RoBERTa}_\text{large}$相比，基于一半训练数据训练的 **DeBERTa&#x20;**&#x6A21;型在很多 NLP 任务中始终表现得更好，MNLI 提高了0.9%，SQuAD v2.0提高了2.3%，RACE提高了3.6%。同时，训练由 48 个 Transformer 层和 15 亿参数组成的$\text{DeBERTa}_\text{large}$模型，性能得到显著提升，单个 DeBERTa 模型在平均得分方面首次超过了 SuperGLUE 基准测试上的表现，同时集成的 DeBERTa 模型位居榜首。截至 2021 年 1 月 6 日，SuperGLUE 排行榜已经超过了人类基线。
 
-* **DeBERTa V2**
+#### 3.5 **DeBERTa V2**
 
 2021年2月 DeBERTa 放出的 V2 版本在 V1 版本的基础上又做了一些改进：
 
@@ -487,9 +485,7 @@ $\tilde{A}_{i,j}$是注意矩阵$\tilde{A}$的元素，表示从 token $i$到 to
 >
 > 4. **应用桶方法进行相对位置编码**：V2 模型使用对数桶进行相对位置编码，各个尺寸模型的bucket数都是256
 
-这些变化里 1 和 2 是把模型变大，3 和 4 是把模型变小。总的效果是 V2 版本模型比 V1 版本变大了。这几个变更对模型的影响如下，其中增大词典效果最显著：
-
-![]()
+这些变化里 1 和 2 是把模型变大，3 和 4 是把模型变小。总的效果是 V2 版本模型比 V1 版本变大了。
 
 ## 4. DeBERTa V3
 
@@ -497,7 +493,7 @@ $\tilde{A}_{i,j}$是注意矩阵$\tilde{A}$的元素，表示从 token $i$到 to
 
 BERT 只使用了编码器层和 **MLM&#x20;**&#x8FDB;行训练。而 **ELECTRA&#x20;**&#x4F7F;用 **GAN&#x20;**&#x7684;思想，利用生成对抗网络构造两个编码器层进行对抗训练。其中一个是基于 **MLM&#x20;**&#x8BAD;练的生成模型，另一个是基于二分类训练的判别模型。生成模型用于生成不确定的结果同时替换输入序列中的掩码标记，然后将修改后的输入序列送到判别模型。判别模型需要判断对应的 token 是原始 token 还是被生成器替换的 token。
 
-* **损失函数**
+#### 4.1 **损失函数**
 
 **Generator $\theta_G$**&#x4F7F;用 **MLM&#x20;**&#x8FDB;行训练，用于生成替换 masked tokens 的 ambiguous tokens，损失函数如下：
 
@@ -517,15 +513,13 @@ $$L_{\text{RTD}} = \mathbb{E} \left(-\sum_{i} \log p_{\theta_D} \left( \mathbb{1
 
 **总的损失函数**为：$L = L_\text{MLM} + \lambda L_\text{RTD}$
 
-* **训练方法**
+#### 4.2 **训练方法**
 
 因为多了个生成器，DeBERTa V3 对不同的 embedding sharing 进行了探讨，下图是这三种方式的示意图：
 
 ![]()
 
-**Embedding Sharing**
-
-**(ES)**
+**Embedding Sharing** **(ES)**
 
 在 **RTD&#x20;**&#x9884;训练时，生成器和判别器共享 token embedding $E$，因此$E$的梯度为
 
@@ -533,11 +527,7 @@ $$g_E = \frac{\partial L_\text{MLM}}{\partial E} + \lambda \frac{\partial L_\tex
 
 这相当于是进行 multitask learning，但 **MLM&#x20;**&#x4F7F;得语义相近的 tokens 对应的 embedding 接近，而 **RTD&#x20;**&#x4F7F;得语义相近的 tokens 对应的 embedding 相互远离
 
-
-
-**No Embedding Sharing&#x20;**
-
-**(NES)**
+**No Embedding Sharing&#x20;** **(NES)**
 
 不共享 token embedding。先用$L_\text{MLM}$训练生成器，再用$\lambda L_\text{RTD}$训练判别器。
 
@@ -545,9 +535,7 @@ $$g_E = \frac{\partial L_\text{MLM}}{\partial E} + \lambda \frac{\partial L_\tex
 
 但不共享 token embedding 损害了模型性能，这证明了 ES 的好处：除了参数高效，生成器的 embedding 能使得判别器更好
 
-**Gradient-Disentangled&#x20;**
-
-**Embedding Sharing (GDES)**
+**Gradient-Disentangled&#x20;Embedding Sharing (GDES)**
 
 共享token embedding，但只使用$L_\text{MLM}$而不使用$\lambda L_\text{RTD}$更新$E_G$，从而可以利用$E_G$提升判别器的性能。此外引入初始化为零矩阵的$E_\Delta$去适配$E_G$：
 
@@ -557,6 +545,6 @@ GDES 先用$L_\text{MLM}$训练生成器并更新$E_G$，再用$\lambda L_\text{
 
 **DeBERTa V3** 在某些任务中相比之前模型有不小的涨幅，其中 GDES 模式优化效果最好。
 
-**总结**
+#### 4.3 **总结**
 
 **DeBERTa&#x20;**&#x603B;的来说没有很多非常创新的东西，算是一个集大成的产物。预训练语言模型发展了这么些年，和刚开始百花齐放时比确实已经没有太多新鲜的东西，但模型水平的进步还是肉眼可见的。
