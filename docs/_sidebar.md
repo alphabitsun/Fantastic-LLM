@@ -20,6 +20,8 @@
     - [Prefix-Tuning](./07%20LLM%20Fine%20tuning/Prefix-Tuning.md)
   - 08 主流模型
     - [08 主流模型对比](./08%20主流模型/08%20主流模型对比.md)
+    - [GPT 系列](./08%20主流模型/GPT系列.md)
+    - [Qwen 系列](./08%20主流模型/Qwen系列.md)
   - 09 模型评估
     - [Evaluate（评测方法与数据集）](./09%20模型评估/Evaluate.md)
   - 其他
