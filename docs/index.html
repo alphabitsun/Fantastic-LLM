@@ -14,6 +14,44 @@
 
   <!-- KaTeX 样式（必须在 head） -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+
+  <style>
+    /* 列表与表格自适应容器宽度 */
+    .markdown-section ul,
+    .markdown-section ol {
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    .markdown-section li {
+      white-space: normal;
+    }
+    /* 表格在小屏可横向滚动，避免溢出 */
+    .markdown-section table {
+      display: block;
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .markdown-section table thead th,
+    .markdown-section table tbody td {
+      white-space: nowrap;
+    }
+    /* 代码块与内联代码的换行与滚动优化 */
+    .markdown-section pre {
+      overflow: auto;
+      max-width: 100%;
+    }
+    .markdown-section code {
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+    /* 图片自适应宽度 */
+    .markdown-section img {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
 </head>
 
 <body>
