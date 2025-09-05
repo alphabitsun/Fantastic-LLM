@@ -1,4 +1,4 @@
-## Qwen 系列
+# Qwen 系列
 
 > 导航：Qwen1 → Qwen1.5 → Qwen2 → Qwen2.5 → Qwen3 → QwQ
 
@@ -9,7 +9,7 @@
 >
 > **代码**：[Qwen1](https://github.com/QwenLM/Qwen)  [Qwen2.5](https://github.com/QwenLM/Qwen2)
 
-### 1 Qwen1
+## 1. Qwen1
 
 **Qwen** 是由阿里提出的聊天和预训练大型语言模型。目前开源了 **Qwen** 的各系列模型，包括基础语言模型**`Qwen-1.8B`**、**`Qwen-7B`**、**`Qwen-14B`**和**`Qwen-72B`**，以及相应的聊天模型**`Qwen-1.8B-Chat`**、**`Qwen-7B-Chat`**、**`Qwen-14B-Chat`**和**`Qwen-72B-Chat`**。各个规模模型参数如右表。
 

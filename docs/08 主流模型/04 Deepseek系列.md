@@ -1,10 +1,10 @@
-## 4.5 DeepSeek 系列
+# DeepSeek 系列
 
 > **论文**：[**DeepSeek-V1**](https://arxiv.org/pdf/2401.02954)  **[DeepSeek-V2](https://arxiv.org/pdf/2405.04434)  [DeepSeek-V3](https://arxiv.org/pdf/2412.19437)  [DeepSeekMoE](https://arxiv.org/pdf/2401.06066)**
 >
 > **代码**：[**DeepSeek-V1**](https://github.com/deepseek-ai/DeepSeek-LLM)  **[DeepSeek-V2](https://github.com/deepseek-ai/DeepSeek-V2)  [DeepSeek-V3](https://github.com/deepseek-ai/DeepSeek-V3)**
 
-### 4.5.1 DeepSeek-V1
+## 1. DeepSeek-V1
 
 **DeepSeek&#x20;**&#x6DF1;入研究了规模定律，并提出了自己独特的发现，这些发现有助于在两种流行的开源配&#x7F6E;**`7B`**&#x548C;**`67B`**&#x4E2D;扩展大型模型，并从长远的角度推进了开源语言模型的发展。
 
@@ -152,7 +152,7 @@ $$D_{\text{opt}} = D_{\text{base}}C^b$$
 
 **DeepSeek Chat&#x20;**&#x5B58;在一些局限性，如知识更新滞后、可能生成非事实信息及幻觉倾向。特别是初版中文数据不详尽，导致在特定中文主题上的表现不佳，且对非中英文的语言支持较弱。未来，**DeepSeek** 计划发布关于代码和 **MoE** 的技术报告，并致力于创建更高质量的数据集以增强下一版本在推理、中文知识、数学和编码方面的能力。**DeepSeek** 对齐团队正探索如何提供更加有用、诚实和安全的模型，初步实验显示强化学习可提升复杂推理能力。
 
-### 4.5.2 DeepSeek-V2
+## 2. DeepSeek-V2
 
 **Deepseek-V2** 采用了包括多头潜在注意力 **MLA** 和 **DeepSeekMoE** 在内的创新架构。**MLA** 通过将 KV 缓存大幅压缩成一个潜在向量来保证高效的推理过程，而 **DeepSeekMoE** 则采用大量的小参数专家进行建模，同时在训练和推理上加入了更多的优化。沿袭了一贯的作风，**DeepSeek** 对模型进行了完全的 MIT 协议开源，可以商用。对于算力不是那么充足的开发者，官方提供了 API 调用的方案，费用更是达到了全场最低。
 
@@ -258,7 +258,7 @@ $$r_i = c_1\cdot \text{RM}_\text{helpful}(o_i) + c_2\cdot \text{RM}_\text{safety
 
 尽管如此，**DeepSeek-V2** 及其聊天版本仍存在常见 LLM 的局限性，如预训练后缺乏持续的知识更新、可能生成不准确信息以及可能出现幻觉等。此外，由于数据主要由中文和英文内容组成，该模型在其他语言上的表现可能有限。
 
-### 4.5.3 DeepSeek-V2.5
+# 3. DeepSeek-V2.5
 
 **DeepSeek&#x20;**&#x5C06; **DeepSeek-V2-Chat** 和 **DeepSeek-Coder-V2** 两个模型的合并，形成 **DeepSeek-V2.5**。**DeepSeek-V2.5** 不仅保留了原有 **Chat** 模型的通用对话能力和 **Coder** 模型的强大代码处理能力，还更好地对齐了人类偏好。此外 **DeepSeek-V2.5** 在写作任务、指令跟随等多个方面也实现了大幅提升。
 
@@ -274,7 +274,7 @@ $$r_i = c_1\cdot \text{RM}_\text{helpful}(o_i) + c_2\cdot \text{RM}_\text{safety
 
 3. **代码能力**：**DeepSeek-V2.5** 保留了 **DeepSeek-Coder-V2-0724** 的代码能力，&#x5728;**`HumanEval Python`**&#x548C;**`LiveCodeBench`**&#x6D4B;试中显示了较为显著的改进。&#x5728;**`HumanEval Multilingual`**&#x548C;**`Aider`**&#x6D4B;试中 **DeepSeek-Coder-V2-0724** 略胜一筹。&#x5728;**`SWE-verified`**&#x6D4B;试中，两个版本的表现都较低，表明在此方面仍需进一步优化。&#x5728;**`FIM`**&#x8865;全任务上，内部评测&#x96C6;**`DS-FIM-Eval`**&#x7684;评分提升&#x4E86;**`5.1%`**。在内部的主观评&#x6D4B;**`DS-Arena-Code`**&#x4E2D;，**DeepSeek-V2.5** 对战竞品的胜率取得了显著提升，裁判仍为 GPT-4o。
 
-### 4.5.4 DeepSeek-V3
+## 4. DeepSeek-V3
 
 **DeepSeek-V3** 也是 **MoE** 语言模型，总共&#x6709;**`671B`**&#x53C2;数，每次处理标记时激&#x6D3B;**`37B`**&#x53C2;数。为了实现高效的推理和经济的训练，**DeepSeek-V3** 采用了在 **DeepSeek-V2** 中使用过的 **MLA** 和 **DeepSeekMoE** 架构。此外，**DeepSeek-V3** 首创了**无辅助损失的负载均衡策略**，并设定了**多 Token 预测训练目标**以增强性能。
 
@@ -518,4 +518,4 @@ $$A_i=\frac{r_i-\operatorname{mean}\left(\left\{r_1, r_2, \cdots, r_G\right\}\ri
 
 在强化学习过程中，**DeepSeek-V3&#x20;**&#x878D;入了来自不同领域的提示词，例如编码、数学、写作、角色扮演和问答。这种方法不仅使模型更贴近人类偏好，而且还提高了在基准测试中的性能，尤其是在可用的监督微调数据有限的情况下。
 
-### 4.5.5 DeepSeek-R1
+## 5. DeepSeek-R1
