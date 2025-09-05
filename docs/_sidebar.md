@@ -1,20 +1,31 @@
 - [Fantastic-LLM](./README.md)
-- [首页](./index.md)
-- [01 Transformer Attention Is All You Need](./01%20Transformer/01%20Transformer%20Attention%20Is%20All%20You%20Need.md)
-- [02 Bert 家族](./01%20Transformer/02%20Bert.md)
-- [02 Tokenizer](./02%20Tokenizer/02%20Tokenizer.md)
-- [03 Embedding](./03%20Embedding/03%20Embedding.md)
-- [04 Positional Embedding](./04%20Positional%20Embedding/04%20Positional%20Embedding.md)
-- [05 Activations and Normalizations](./05%20Activations%20and%20Normalizations/05%20Activations%20and%20Normalizations.md)
-- [06 Optimizations](./06%20Optimizations/06%20Optimizations.md)
-- [07 LLM Fine Tuning 总览](./07%20LLM%20Fine%20tuning/07%20LLM%20Fine%20tuning.md)
-- [LoRA](./07%20LLM%20Fine%20tuning/LoRA.md)
-- [Prefix-Tuning](./07%20LLM%20Fine%20tuning/Prefix-Tuning.md)
-- [01 主流模型对比](./08%20主流模型/01%20主流模型对比.md)
-- [02 GPT 系列](./08%20主流模型/02%20GPT系列.md)
-- [03 Llama 系列](./08%20主流模型/03%20Llama系列.md)
-- [04 DeepSeek 系列](./08%20主流模型/04%20Deepseek系列.md)
-- [05 Qwen 系列](./08%20主流模型/05%20Qwen系列.md)
-- [Evaluate（评测方法与数据集）](./09%20模型评估/Evaluate.md)
-- [面试题（Part 1）](./面试题/part1.md)
-- [大语言模型学习笔记（下）](./大语言模型学习笔记（下）.md)
+  - 快速开始
+    - [首页](./index.md)
+  - 01 Transformer
+    - [01 Transformer Attention Is All You Need](./01%20Transformer/01%20Transformer%20Attention%20Is%20All%20You%20Need.md)
+    - [02 Bert 家族](./01%20Transformer/02%20Bert.md)
+  - 02 Tokenizer
+    - [02 Tokenizer](./02%20Tokenizer/02%20Tokenizer.md)
+  - 03 Embedding
+    - [03 Embedding](./03%20Embedding/03%20Embedding.md)
+  - 04 Positional Embedding
+    - [04 Positional Embedding](./04%20Positional%20Embedding/04%20Positional%20Embedding.md)
+  - 05 Activations and Normalizations
+    - [05 Activations and Normalizations](./05%20Activations%20and%20Normalizations/05%20Activations%20and%20Normalizations.md)
+  - 06 Optimizations
+    - [06 Optimizations](./06%20Optimizations/06%20Optimizations.md)
+  - 07 LLM Fine Tuning（PEFT）
+    - [总览](./07%20LLM%20Fine%20tuning/07%20LLM%20Fine%20tuning.md)
+    - [LoRA](./07%20LLM%20Fine%20tuning/LoRA.md)
+    - [Prefix-Tuning](./07%20LLM%20Fine%20tuning/Prefix-Tuning.md)
+  - 08 主流模型
+    - [01 主流模型对比](./08%20主流模型/01%20主流模型对比.md)
+    - [02 GPT 系列](./08%20主流模型/02%20GPT系列.md)
+    - [03 Llama 系列](./08%20主流模型/03%20Llama系列.md)
+    - [04 DeepSeek 系列](./08%20主流模型/04%20Deepseek系列.md)
+    - [05 Qwen 系列](./08%20主流模型/05%20Qwen系列.md)
+  - 09 模型评估
+    - [Evaluate（评测方法与数据集）](./09%20模型评估/Evaluate.md)
+  - 其他
+    - [面试题（Part 1）](./面试题/part1.md)
+    - [大语言模型学习笔记（下）](./大语言模型学习笔记（下）.md)
