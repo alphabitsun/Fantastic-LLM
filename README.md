@@ -1,4 +1,4 @@
-<img src="./images/llm.png" alt="llm-banner" style="zoom:50%;" />
+<img src="./images/llm.png" alt="llm-banner" style="width:100%; height:auto;" />
 
 # FantasticLLM
 
