@@ -22,7 +22,7 @@
 
 > 1. **Pre-normalization**：借鉴 **GPT-3**，为了提高训练稳定性，**LLaMA** 对每个 Transformer 子层的输入进行归一化，使用 **`RMSNorm`** 归一化函数，好处是不用计算样本的均值，速度提升了 40%。
 >
-> 2. **FFN\_SWiGLU**：借鉴 **PaLM**，结构上使用门控线性单元，且为了保持 **FFN** 层参数量不变，将隐藏单元的数量调整为$$\frac{8}{3}d$$而不是 **PaLM** 论文中的$$4d$$，同时将 **`ReLU`** 替换为 **`SiLU`**&#x4EE5;提高性能。
+> 2. **FFN\_SWiGLU**：借鉴 **PaLM**，结构上使用门控线性单元，且为了保持 **FFN** 层参数量不变，将隐藏单元的数量调整为$\frac{8}{3}d$而不是 **PaLM** 论文中的$4d$，同时将 **`ReLU`** 替换为 **`SiLU`**&#x4EE5;提高性能。
 >
 > 3. **RoPE**：借鉴 **GPTNeo**，模型的输入不再使用 positional embeddings，而是在网络的每一层添加了 **`RoPE`**。
 
@@ -38,11 +38,11 @@
 
 **RMSNorm**（**R**oot **M**ean **S**quare Layer **Norm**alization）假设 **LayerNorm** 中的重新中心化不再是必须的，即平移不变性不重要，并提出了一种新的归一化方法：**均方根层归一化 RMSNorm**。**RMSNorm** 通过**均方根 RMS** 对每一层神经元的输入进行归一化，使模型具备重新缩放不变性和隐式学习率调整的能力。相比 **LayerNorm**，**RMSNorm** 计算更为简洁，大约可以节省 7% 到 64% 的运算。
 
-**RMSNorm** 对每个 token 的特征向量进行归一化计算。设某个 token 的特征向量为$$\textrm{x}\in \mathbb{R}$$，**RMSNorm** 的计算如下：
+**RMSNorm** 对每个 token 的特征向量进行归一化计算。设某个 token 的特征向量为$\textrm{x}\in \mathbb{R}$，**RMSNorm** 的计算如下：
 
 $$\text{RMSNorm}(x): \hat{x}_i = \gamma \odot \frac{x_i}{\text{RMS}(x)} \\ \text{RMS(x)} = \sqrt{\frac{1}{d} \sum_{x_i \in \textrm{x}} x_i^2 + \epsilon}$$
 
-其中，$$\gamma$$是可学习的缩放参数，$$\epsilon$$的作用是为了保持数值稳定性。$$d$$为输入 token 的数量。
+其中，$\gamma$是可学习的缩放参数，$\epsilon$的作用是为了保持数值稳定性。$d$为输入 token 的数量。
 
 **代码实现**
 
@@ -83,21 +83,21 @@ class RMSNorm(nn.Module):
 
 > https://arxiv.org/pdf/2002.05202
 
-**FFN** 计算过程用数学公式可表达为$$\text{FFN}(x, W_1, W_2, b_1, b_2) = \text{max}(0, xW_1 + b_1 )W_2 + b_2$$
+**FFN** 计算过程用数学公式可表达为$\text{FFN}(x, W_1, W_2, b_1, b_2) = \text{max}(0, xW_1 + b_1 )W_2 + b_2$
 
-在 **T5** 中，使用的是没有偏置的版本，数学公式表达为$$\text{FFN}(x, W_1, W_2) = \text{max}(0, xW_1)W_2$$
+在 **T5** 中，使用的是没有偏置的版本，数学公式表达为$\text{FFN}(x, W_1, W_2) = \text{max}(0, xW_1)W_2$
 
-后续的研究提出了用其他非线性激活函数替换 ReLU，如高斯误差线性单元 **GELU**（**G**aussian **E**rror **L**inear **U**nits）：$$\text{GELU}(x) = x\Phi (x)$$和自门控激活函数$$\text{Swish}_{\beta}(x) = x\sigma(\beta x)$$，其中$$\sigma$$为 $$\text{Sigmoid}$$激活函数：
+后续的研究提出了用其他非线性激活函数替换 ReLU，如高斯误差线性单元 **GELU**（**G**aussian **E**rror **L**inear **U**nits）：$\text{GELU}(x) = x\Phi (x)$和自门控激活函数$\text{Swish}_{\beta}(x) = x\sigma(\beta x)$，其中$\sigma$为 $\text{Sigmoid}$激活函数：
 
 $$\text{FFN}_{\text{GELU}}(x, W_1, W_2) = \text{GELU}(xW_1)W_2 \\ \text{FFN}_{\text{Swish}}(x, W_1, W_2) = \text{Swish}_1(xW_1)W_2$$
 
-其中激活函数$$\text{Swish}(x) = x⋅ \text{Sigmoid}(\beta x) = \frac{x}{1 + e^{-\beta x}}$$，Sigmoid 函数$$\sigma(x) = \frac{1}{1 + e^{-x}}$$。$$\beta$$可以是常数或可训练参数。下图展示了不同$$\beta$$值下的 Swish 曲线。&#x20;
+其中激活函数$\text{Swish}(x) = x⋅ \text{Sigmoid}(\beta x) = \frac{x}{1 + e^{-\beta x}}$，Sigmoid 函数$\sigma(x) = \frac{1}{1 + e^{-x}}$。$\beta$可以是常数或可训练参数。下图展示了不同$\beta$值下的 Swish 曲线。&#x20;
 
-> 1. 如果$$\beta = 1$$，Swish 等价于 Sigmoid 加权线性单&#x5143;**`SiLU`**&#x20;
+> 1. 如果$\beta = 1$，Swish 等价于 Sigmoid 加权线性单&#x5143;**`SiLU`**&#x20;
 >
-> 2. 当$$\beta = 0$$时，Swish 变为缩放线性函数$$f(x) = \frac{x}{2}$$
+> 2. 当$\beta = 0$时，Swish 变为缩放线性函数$f(x) = \frac{x}{2}$
 >
-> 3. 随着$$\beta$$趋近于无穷大，Swish 变得与 ReLU 函数相似。这表明 Swish 可以被看作是一个平滑的函数，在线性函数和 ReLU 之间进行非线性插值。如果将$$\beta$$设置为可训练参数，模型可以调控这种插值的程度
+> 3. 随着$\beta$趋近于无穷大，Swish 变得与 ReLU 函数相似。这表明 Swish 可以被看作是一个平滑的函数，在线性函数和 ReLU 之间进行非线性插值。如果将$\beta$设置为可训练参数，模型可以调控这种插值的程度
 
 ![]()
 
@@ -117,7 +117,7 @@ $$\text{FFN}_{\text{GLU}}(x, W, V, W_2) = (\sigma(xW) \otimes xV)W_2 \\
 \text{FFN}_{\text{GEGLU}}(x, W, V, W_2) = (\text{GELU}(xW) \otimes xV)W_2 \\
 \text{FFN}_{\text{SwiGLU}}(x, W, V, W_2) = (\text{Swish}_1(xW) \otimes xV)W_2$$
 
-**LLaMA** 对 FFN 的改进结构$$\text{FFN}_{\text{SwiGLU}}$$使用了$$\beta=1$$&#x7684;**`Swish`** 激活函数，&#x5373;**`SiLU`**，$$\text{SiLU}(x) = x⋅ \sigma(x)$$，**LLaMA** 官方提供的代码使用 **`F.silu()`** 激活函数，具体的数学表达式如下:
+**LLaMA** 对 FFN 的改进结构$\text{FFN}_{\text{SwiGLU}}$使用了$\beta=1$&#x7684;**`Swish`** 激活函数，&#x5373;**`SiLU`**，$\text{SiLU}(x) = x⋅ \sigma(x)$，**LLaMA** 官方提供的代码使用 **`F.silu()`** 激活函数，具体的数学表达式如下:
 
 $$\text{FFN}_{\text{SwiGLU}}(x, W, V, W_2) = (\text{SiLU}(xW)\otimes xV)W_2$$
 
@@ -392,7 +392,7 @@ class Transformer(nn.Module):
 
 * **训练**
 
-**LLaMA-1&#x20;**&#x6A21;型未进行特定任务的微调，专注于自监督学习。训练过程中采用了 AdamW 优化器，配置了$$β_1$$和$$β_2$$参数以影响收敛性和稳定性，并使用余弦学习率调度策略逐步降低学习率以改善收敛。模型实施了 0.1 的权重衰减和 1.0 的梯度裁剪来防止过拟合并确保数值稳定，同时引入预热步骤以稳定初期训练动态。根据模型大小调整学习率和批量大小，以优化资源分配与效率。
+**LLaMA-1&#x20;**&#x6A21;型未进行特定任务的微调，专注于自监督学习。训练过程中采用了 AdamW 优化器，配置了$β_1$和$β_2$参数以影响收敛性和稳定性，并使用余弦学习率调度策略逐步降低学习率以改善收敛。模型实施了 0.1 的权重衰减和 1.0 的梯度裁剪来防止过拟合并确保数值稳定，同时引入预热步骤以稳定初期训练动态。根据模型大小调整学习率和批量大小，以优化资源分配与效率。
 
 为了提高大规模语言模型训练的效率，**LLaMA-1&#x20;**&#x91C7;取了一系列优化措施。通过高效实现因果多头注意力机制，减少了内存占用和计算时间；手动实现反向传播函数替代自动微分系统，并利用检查点技术保存昂贵的激活计算，提升了训练速度并减少了资源消耗。此外，通过模型和序列并行性及优化 GPU 间通信，进一步增强了训练效率。这些优化对于 650 亿参数规模的模型尤为重要，能显著缩短训练时间并提升运算效率，展示了高性能计算中对资源管理和效率的高度关注。
 
@@ -406,7 +406,7 @@ class Transformer(nn.Module):
 
 **LLaMA-2** 的 Tokenizer 配置与 **LLaMA-1** 完全相同，分词使用 **`SentencePiece`** 库实现的 **`BPE`** 算法，字典大小为 **`32k`**。**LLaMA-2** 模型架构和 **LLaMA-1** 一模一样，但模型推理的解码阶段的 kv cache 优化上做了改变。具体来说，在 34B 和 70B 参数模型上使用了 **`GQA`** 优化技术，7B 和 13B 模型依然使用 **`MQA`**。具体的 GQA 与 MQA 优化技术详见“注意力”章节。
 
-> **注**：kv cache 内存计算公式为：$$\text{kv-cache} = 22nhb(s+o) = 4nhb(s+o)$$
+> **注**：kv cache 内存计算公式为：$\text{kv-cache} = 22nhb(s+o) = 4nhb(s+o)$
 
 * **训练数据**
 
