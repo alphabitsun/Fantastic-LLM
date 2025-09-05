@@ -19,9 +19,11 @@
     - [LoRA](./07%20LLM%20Fine%20tuning/LoRA.md)
     - [Prefix-Tuning](./07%20LLM%20Fine%20tuning/Prefix-Tuning.md)
   - 08 主流模型
-    - [08 主流模型对比](./08%20主流模型/08%20主流模型对比.md)
-    - [GPT 系列](./08%20主流模型/GPT系列.md)
-    - [Qwen 系列](./08%20主流模型/Qwen系列.md)
+    - [01 主流模型对比](./08%20主流模型/01%20主流模型对比.md)
+    - [02 GPT 系列](./08%20主流模型/02%20GPT系列.md)
+    - [03 Llama 系列](./08%20主流模型/03%20Llama系列.md)
+    - [04 DeepSeek 系列](./08%20主流模型/04%20Deepseek系列.md)
+    - [05 Qwen 系列](./08%20主流模型/05%20Qwen系列.md)
   - 09 模型评估
     - [Evaluate（评测方法与数据集）](./09%20模型评估/Evaluate.md)
   - 其他
