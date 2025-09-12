@@ -30,3 +30,8 @@ NL2SQL
 
 vnnan
 
+
+
+
+
+[CAMEL](https://github.com/camel-ai/camel)
