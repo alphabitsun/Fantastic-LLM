@@ -18,14 +18,26 @@
     - [总览](./07%20LLM%20Fine%20tuning/07%20LLM%20Fine%20tuning.md)
     - [LoRA](./07%20LLM%20Fine%20tuning/LoRA.md)
     - [Prefix-Tuning](./07%20LLM%20Fine%20tuning/Prefix-Tuning.md)
+    - 模型微调实战
+      - [Qwen2-Medical-SFT](./07%20LLM%20Fine%20tuning/模型微调实战/Qwen2-Medical-SFT/README.md)
   - 08 主流模型
     - [01 主流模型对比](./08%20主流模型/01%20主流模型对比.md)
     - [02 GPT 系列](./08%20主流模型/02%20GPT系列.md)
     - [03 Llama 系列](./08%20主流模型/03%20Llama系列.md)
     - [04 DeepSeek 系列](./08%20主流模型/04%20Deepseek系列.md)
     - [05 Qwen 系列](./08%20主流模型/05%20Qwen系列.md)
+    - 研究报告
+      - [DeepSeek-V3 报告](./08%20主流模型/研究报告/DeepSeek-V3.pdf)
+      - [GPT-OSS 模型卡](./08%20主流模型/研究报告/openai-gpt-oss-120b-gpt-oss-20b模型卡英中对照版.pdf)
   - 09 模型评估
     - [Evaluate（评测方法与数据集）](./09%20模型评估/Evaluate.md)
-  - 其他
-    - [面试题（Part 1）](./面试题/part1.md)
-    - [大语言模型学习笔记（下）](./大语言模型学习笔记（下）.md)
+  - 10 模型部署
+    - [模型部署](./10%20模型部署/模型部署.md)
+  - 11 模型训练
+    - [模型训练](./11%20模型训练/)（待完善）
+  - 15 开源项目
+    - [开源项目](./15%20开源项目/temp.md)
+  - 18 面试题
+    - [面试题（Part 1）](./18%20面试题/part1.md)
+  - 20 数据集
+    - [数据集](./20%20数据集/dataset.md)
