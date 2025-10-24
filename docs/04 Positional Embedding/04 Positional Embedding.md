@@ -136,11 +136,11 @@ print(relative_pos_encoding.shape)  # (10, 10, 16)
 \[
     ⁍
 \]
-    
+
 \[
     ⁍
 \]
-    
+
     其中：
     
     •  $x$  是 Query 或 Key 向量，
@@ -150,7 +150,7 @@ print(relative_pos_encoding.shape)  # (10, 10, 16)
     •  $pos$ 是 token 在序列中的位置。
     
     这种旋转变换能确保 **两个 token 之间的内积只与它们的相对位置有关，而不是绝对位置**，从而让注意力机制更加稳定。
-    
+
 4. **RoPE 在 LLaMA 中的应用**
    
     在 LLaMA 的实现中，RoPE 被用于 **Transformer 的 Self-Attention 计算**。其具体做法是：
