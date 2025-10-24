@@ -1,6 +1,6 @@
 # 03. Embedding
 
-[https://huggingface.co/spaces/mteb/leaderboard](https://huggingface.co/spaces/mteb/leaderboard)
+[Embedding Leaderboard](https://huggingface.co/spaces/mteb/leaderboard)
 
 ## 1. 简介
 
@@ -10,7 +10,7 @@ Embedding是一种向量化（Vectorization）的技术，是指将文本（或�
 
 - **作用**：将输入文本中的**每个token**转换为一个固定维度的稠密向量，是模型输入的基础表示。
 - **目的**：让模型能“理解”离散的符号（如 "cat"、"##ing"），将其表示为可计算的数值形式。
-- **示例**：  
+- **示例**：
   句子 `"I love NLP"` → 分词为 `["I", "love", "NLP"]` → 每个词映射为一个向量（如 768 维），最终形成$3*768$维的矩阵。
 
 2. **Sentence Embedding / Paragraph Embedding（句子/段落嵌入）**
@@ -21,7 +21,7 @@ Embedding是一种向量化（Vectorization）的技术，是指将文本（或�
   - 对所有 token embeddings 做平均（Mean Pooling）；
   - 使用特殊标记（如 BERT 中的 `[CLS]`）的输出；
   - 使用专用模型（如 Sentence-BERT）。
-- **示例**：  
+- **示例**： 
   `"I love NLP"` → 一个 768 维向量，代表整句话的含义。
 
 3. **Positional Embedding（位置嵌入）**
@@ -263,31 +263,50 @@ Hierarchical Softmax和Negative Sampling两种改进方法。有兴趣可自行�
 
 ​	• **缺点**：需要大量的训练数据，且词向量只针对单词级别，无法处理多义词或上下文变化。
 
-### **4. ~~GloVe（Global Vectors for Word Representation）~~**
+## **6. GloVe**
 
-**GloVe**是另一种词嵌入方法，基于矩阵分解技术，通过捕捉词与词之间的共现统计信息来学习词向量。
+**GloVe（Global Vectors for Word Representation）**
+
+
+
+## **7. FastText**
+
+https://arxiv.org/pdf/1607.01759
+
+**FastText**是Facebook在2017年提出的文本分类模型，词向量则是FastText的一个副产物。它的优点也非常明显，在文本分类任务中，FastText往往能取得和深度网络相媲美的精度，却在训练时间上比深度网络快许多数量级。在标准的多核CPU上，能够训练10亿词级
+别语料库的词向量在10分钟之内，能够分类有着30万多类别的50多万句子在1分钟之内。
+Word2Vec把语料库中的每个单词当成原子的，它会为每个单词生成一个向量。这忽略了单词内部的形态特征，比如：apple和apples，两个单词都有较多公共字符，即它们的内部形态类似，但是在传统充的Word2Vec中，这种单词内部形态信息因为它们被转换成不不同的ID丢失了。
+为了克服这个问题，FastText使用了字符级别的n-grams来表示一个单词。
+
+例：对于单词 apple，假设n的取值为3，则它的trigram有`<ap, app, ppl, ple, le>`
+其中, `<` 表示前缀，`>`表示后缀。于是可以用这些trigram来表示apple这个单词,进一步可以以用这5个trigram的向量叠加来表示apple的词向量。
+这带来两点好处:
+
+1. 对于低频词生成的词向量效果会更好。因为它们的n-gram可以和其它词共享。
+2. 对于训练词库之外的单词，仍然可以构建它们的词向量。可以叠加它们的字符级n-gram向量。
+
+FastText模型架构和Word2Vec的CBOW模型架构非常相似，和CBOW一样，FastText模型也只有三层：输入层、隐藏层、输出层，输入都是多个经向量表示的单词，输出都是一个特定的target,隐藏层都是对多个词向量的叠加平均。
+不同的是
+
+1. CBOW的输入是目标单词的上下文，FastText的输入是多个单词及其n-gram特征，这些特征用来表示单个文档
+2. CBOW的输入单词被One-Hot编码过,FastText的输入特征是被embedding过
+3. CBOW的输出是目标词汇，FastText的输出是文档对应的多类标。
+
+
+FastText在输入时，将单词的字符级别的n-gram向量作为额外的特征；在输出时，FastText采用了分层Softmax，大大降低了模型川练时间。
+仔细观察模型的后半部分，即从隐含层输出到输出层输出，会发现它就是一个softmax线性多类别分类器，分类器的输入是一个用来表征当前文档的向量；模型的前半部分，即从输入层输入到隐含层输出部分分，主要在做一件事情：生成用来表征文档的向量。那么它是如何做的呢？叠加构成这篇文档的所有词及n-gram的词向量,然后取平均。叠加词同向量背后的思想就是传统的词袋法，即将文档看成一个由词构成的集合。
+于是FastText的核心思想就是：将整篇文档的词及n-grarm向量叠加平均得到文档向量，然后使用文档向量做softnnax多分类。这中间涉及到两个技巧：字符级n-gram特征的引入以及分层Softmax分类。
+使用词embedding而非词本身作为特征，这是FastText效果好的一个原因；另一个原因就是字符级n-gram特征的引入对分类效果会有一些提升。
 
 **优缺点**：
 
-•	**优点**：可以在全局语境下捕捉到词的关系，生成的词向量具有较好的语义相似性。
+​	• **优点**：能够有效处理OOV（Out of Vocabulary）词汇，特别适用于处理包含拼写错误、新词和稀有词的任务。
 
-•	**缺点**：训练时间长，生成的向量无法处理上下文依赖性。
-
-**应用**：情感分析、文本分类、语义搜索等任务。
-
-### **5. FastText**
-
-**FastText**是Facebook AI提出的一种扩展Word2Vec的词嵌入方法。与Word2Vec不同，FastText不仅考虑单个词，还考虑词的子词（即字符n-grams），这样即使是未出现过的词也能通过其子词进行有效表示。
-
-**优缺点**：
-
-•	**优点**：能够有效处理OOV（Out of Vocabulary）词汇，特别适用于处理包含拼写错误、新词和稀有词的任务。
-
-•	**缺点**：生成的词向量比Word2Vec的训练时间要长，且对高频词的表示有时不如Word2Vec精确。
+​	• **缺点**：生成的词向量比Word2Vec的训练时间要长，且对高频词的表示有时不如Word2Vec精确。
 
 **应用**：文本分类、命名实体识别（NER）等任务。
 
-### **6. BERT（Bidirectional Encoder Representations from Transformers）**
+## **8. BERT（Bidirectional Encoder Representations from Transformers）**
 
 **BERT**是一个基于Transformer架构的预训练语言模型，它不仅可以用于生成词向量，还可以用于句子级别的向量表示。BERT通过双向上下文学习来表示词语，而不仅仅是依赖于左到右的单向上下文。
 
@@ -299,7 +318,7 @@ Hierarchical Softmax和Negative Sampling两种改进方法。有兴趣可自行�
 
 **应用**：文本分类、情感分析、问答系统、机器翻译等任务。
 
-### **7. ELMo（Embeddings from Language Models）**
+## **9. ELMo（Embeddings from Language Models）**
 
 **ELMo**是另一种基于深度学习的词嵌入方法，与BERT类似，但它是基于语言模型的生成式嵌入。ELMo根据上下文动态生成词向量，能够捕捉到单词在不同上下文中的含义。
 
@@ -311,7 +330,7 @@ Hierarchical Softmax和Negative Sampling两种改进方法。有兴趣可自行�
 
 **应用**：文本分类、命名实体识别、情感分析等。
 
-### **8. Sentence Embedding（句子向量）**
+## **10. Sentence Embedding（句子向量）**
 
 **句子向量化**是将整句或段落转换为固定长度的向量表示的方法。常见的句子嵌入方法包括 **Universal Sentence Encoder**（USE）、**InferSent**、**SBERT**（Sentence-BERT）等。
 
@@ -323,7 +342,7 @@ Hierarchical Softmax和Negative Sampling两种改进方法。有兴趣可自行�
 
 **应用**：文本匹配、信息检索、语义搜索等。
 
-### **9. Transformer-based Models (T5, GPT, etc.)**
+## **11. Transformer-based Models (T5, GPT, etc.)**
 
 **Transformer架构**（如T5、GPT等）不仅可以生成词或句子的向量，还可以通过预训练模型获得更好的上下文表示。这些模型通常是在大规模语料库上进行训练，通过上下文进行自我学习，生成文本的表示。
 
